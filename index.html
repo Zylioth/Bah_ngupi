@@ -17,189 +17,50 @@
             --danger: #e07a5f;
             --border: #2d2824;
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background: var(--bg-color); 
-            color: var(--text-primary); 
-            max-width: 480px; 
-            margin: 0 auto; 
-            padding: 24px 20px; 
-            min-height: 100vh;
-        }
-
-        h1 { 
-            text-align: center; 
-            font-size: 1.5rem; 
-            font-weight: 600;
-            color: var(--accent); 
-            margin-bottom: 24px;
-            letter-spacing: -0.5px;
-        }
-
-        /* Timer Section */
-        .timer-container {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 24px;
-            text-align: center;
-            margin-bottom: 24px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        }
-
-        .timer { 
-            font-family: 'JetBrains Mono', monospace; 
-            font-size: 3.5rem; 
-            color: var(--text-primary); 
-            margin-bottom: 20px;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .timer-controls {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-
-        .btn { 
-            padding: 12px 20px; 
-            border: none; 
-            border-radius: 10px; 
-            cursor: pointer; 
-            font-size: 0.95rem; 
-            font-weight: 600;
-            transition: all 0.2s ease;
-            flex: 1;
-            max-width: 120px;
-        }
-
+        body { font-family: 'Inter', sans-serif; background: var(--bg-color); color: var(--text-primary); max-width: 480px; margin: 0 auto; padding: 24px 20px; min-height: 100vh; }
+        h1 { text-align: center; font-size: 1.5rem; font-weight: 600; color: var(--accent); margin-bottom: 24px; letter-spacing: -0.5px; }
+        .timer-container { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 24px; text-align: center; margin-bottom: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .timer { font-family: 'JetBrains Mono', monospace; font-size: 3.5rem; color: var(--text-primary); margin-bottom: 20px; font-variant-numeric: tabular-nums; }
+        .timer-controls { display: flex; gap: 10px; justify-content: center; }
+        .btn { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer; font-size: 0.95rem; font-weight: 600; transition: all 0.2s ease; flex: 1; max-width: 120px; }
         .btn:active { transform: scale(0.96); }
         .btn-start { background: var(--success); color: white; }
-        .btn-start:hover { background: #5a7a6c; }
         .btn-stop { background: var(--danger); color: white; }
-        .btn-stop:hover { background: #c96a52; }
         .btn-reset { background: var(--border); color: var(--text-secondary); }
-        .btn-reset:hover { background: #3d3631; color: var(--text-primary); }
-
-        /* Form Section */
-        .form-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 24px;
-        }
-
-        .input-row {
-            display: flex;
-            gap: 12px;
-        }
-
-        .input-group { 
-            margin-bottom: 16px; 
-            flex: 1;
-        }
-
-        label { 
-            display: block; 
-            margin-bottom: 6px; 
-            font-size: 0.85rem; 
-            font-weight: 500;
-            color: var(--text-secondary); 
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        input, textarea { 
-            width: 100%; 
-            padding: 12px; 
-            background: var(--bg-color); 
-            border: 1px solid var(--border); 
-            color: var(--text-primary); 
-            border-radius: 8px; 
-            font-size: 1rem;
-            font-family: 'Inter', sans-serif;
-            transition: border-color 0.2s;
-        }
-
-        input:focus, textarea:focus {
-            outline: none;
-            border-color: var(--accent);
-        }
-
+        .bean-search-container { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 24px; }
+        .search-box { position: relative; margin-bottom: 12px; }
+        .search-box input { padding-left: 40px; }
+        .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); font-size: 1.1rem; }
+        .bean-results { max-height: 200px; overflow-y: auto; margin-top: 10px; }
+        .bean-result-item { padding: 12px; background: var(--bg-color); border-radius: 8px; margin-bottom: 8px; cursor: pointer; border: 1px solid var(--border); transition: all 0.2s; }
+        .bean-result-item:hover { border-color: var(--accent); background: #25211d; }
+        .bean-roaster { font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+        .bean-details { font-size: 0.85rem; color: var(--text-secondary); }
+        .selected-bean-display { background: var(--bg-color); padding: 12px; border-radius: 8px; margin-top: 10px; border-left: 3px solid var(--accent); }
+        .form-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 24px; }
+        .input-row { display: flex; gap: 12px; }
+        .input-group { margin-bottom: 16px; flex: 1; }
+        label { display: block; margin-bottom: 6px; font-size: 0.85rem; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+        input, textarea { width: 100%; padding: 12px; background: var(--bg-color); border: 1px solid var(--border); color: var(--text-primary); border-radius: 8px; font-size: 1rem; font-family: 'Inter', sans-serif; transition: border-color 0.2s; }
+        input:focus, textarea:focus { outline: none; border-color: var(--accent); }
         textarea { resize: vertical; min-height: 60px; }
-
-        .btn-save { 
-            background: var(--accent); 
-            color: #12100e; 
-            width: 100%; 
-            padding: 14px;
-            font-size: 1rem;
-            margin-top: 8px;
-        }
-        .btn-save:hover { background: var(--accent-hover); }
-
-        /* History Section */
-        .history { 
-            border-top: 1px solid var(--border); 
-            padding-top: 20px; 
-        }
-        
-        .history h3 {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-            margin-bottom: 16px;
-            font-weight: 500;
-        }
-
-        .shot-card { 
-            background: var(--card-bg); 
-            padding: 16px; 
-            margin-bottom: 12px; 
-            border-radius: 12px; 
-            border-left: 4px solid var(--accent);
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-
-        .shot-card .date {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-        }
-
-        .shot-card .stats {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
-        }
-
-        .shot-card .notes {
-            color: var(--text-secondary);
-            font-style: italic;
-            border-top: 1px solid var(--border);
-            padding-top: 8px;
-            margin-top: 8px;
-        }
-        
-        .empty-state {
-            text-align: center;
-            color: var(--text-secondary);
-            padding: 20px;
-            font-size: 0.9rem;
-        }
+        .btn-save { background: var(--accent); color: #12100e; width: 100%; padding: 14px; font-size: 1rem; margin-top: 8px; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; }
+        .history { border-top: 1px solid var(--border); padding-top: 20px; }
+        .history h3 { font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 16px; font-weight: 500; }
+        .shot-card { background: var(--card-bg); padding: 16px; margin-bottom: 12px; border-radius: 12px; border-left: 4px solid var(--accent); font-size: 0.9rem; line-height: 1.5; }
+        .shot-card .date { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 8px; }
+        .shot-card .stats { display: flex; justify-content: space-between; margin-bottom: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
+        .shot-card .bean-info { color: var(--accent); font-weight: 500; margin-bottom: 8px; }
+        .shot-card .notes { color: var(--text-secondary); font-style: italic; border-top: 1px solid var(--border); padding-top: 8px; margin-top: 8px; }
+        .empty-state { text-align: center; color: var(--text-secondary); padding: 20px; font-size: 0.9rem; }
+        .clear-btn { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; margin-top: 8px; }
     </style>
 </head>
 <body>
 
     <h1>☕ Bah_ngupi</h1>
 
-    <!-- Timer Section -->
     <div class="timer-container">
         <div id="timer" class="timer">00:00.0</div>
         <div class="timer-controls">
@@ -209,7 +70,16 @@
         </div>
     </div>
 
-    <!-- Logger Section -->
+    <div class="bean-search-container">
+        <label>🔍 Search Coffee Beans</label>
+        <div class="search-box">
+            <span class="search-icon"></span>
+            <input type="text" id="beanSearch" placeholder="Type roaster (e.g., Roasted Sip)..." oninput="searchBeans()">
+        </div>
+        <div id="beanResults" class="bean-results"></div>
+        <div id="selectedBeanDisplay" style="display: none;"></div>
+    </div>
+
     <div class="form-card">
         <div class="input-row">
             <div class="input-group">
@@ -232,17 +102,30 @@
         <button class="btn btn-save" onclick="saveShot()">Save Recipe</button>
     </div>
 
-    <!-- History Section -->
     <div class="history">
         <h3>Recent Shots</h3>
         <div id="history-list"></div>
     </div>
 
     <script>
-        let startTime = 0;
-        let elapsed = 0;
-        let timerInterval = null;
-        let finalTime = "00:00.0";
+        // Local Brunei & Malaysia Coffee Bean Database
+        const coffeeBeans = [
+            // Brunei
+            { roaster: "Roasted Sip", name: "House Espresso", origin: "Blend", region: "Brunei", process: "Washed", notes: "Chocolate, nutty, smooth" },
+            { roaster: "Roasted Sip", name: "Single Origin", origin: "Ethiopia", region: "Yirgacheffe", process: "Washed", notes: "Floral, citrus, bright" },
+            { roaster: "Roasted Sip", name: "Dark Roast", origin: "Blend", region: "Brunei", process: "Natural", notes: "Dark chocolate, bold, smoky" },
+            
+            // Malaysia
+            { roaster: "MJU", name: "MJU Signature Blend", origin: "Blend", region: "Malaysia", process: "Washed", notes: "Caramel, balanced, sweet" },
+            { roaster: "MJU", name: "MJU Single Origin", origin: "Sumatra", region: "Mandheling", process: "Wet-hulled", notes: "Earthy, spicy, full body" },
+            { roaster: "Sol", name: "Sol House Blend", origin: "Blend", region: "Malaysia", process: "Washed", notes: "Chocolate, citrus, clean" },
+            { roaster: "Sol", name: "Sol Light Roast", origin: "Kenya", region: "Nyeri", process: "Washed", notes: "Berry, wine-like, bright" },
+            { roaster: "103 Coffee", name: "103 House Blend", origin: "Blend", region: "Malaysia", process: "Washed", notes: "Nutty, chocolate, smooth" },
+            { roaster: "PULP Coffee", name: "PULP Espresso", origin: "Blend", region: "Malaysia", process: "Washed", notes: "Fruity, sweet, complex" }
+        ];
+
+        let selectedBean = null;
+        let startTime = 0, elapsed = 0, timerInterval = null, finalTime = "00:00.0";
 
         function formatTime(ms) {
             let totalSec = Math.floor(ms / 1000);
@@ -262,63 +145,88 @@
             }
         }
 
-        function stopTimer() {
-            clearInterval(timerInterval);
-            timerInterval = null;
-            finalTime = document.getElementById('timer').textContent;
+        function stopTimer() { clearInterval(timerInterval); timerInterval = null; finalTime = document.getElementById('timer').textContent; }
+        function resetTimer() { clearInterval(timerInterval); timerInterval = null; elapsed = 0; finalTime = "00:00.0"; document.getElementById('timer').textContent = finalTime; }
+
+        function searchBeans() {
+            const query = document.getElementById('beanSearch').value.toLowerCase();
+            const resultsDiv = document.getElementById('beanResults');
+            if (query.length < 2) { resultsDiv.innerHTML = ''; return; }
+
+            const results = coffeeBeans.filter(bean => 
+                bean.roaster.toLowerCase().includes(query) ||
+                bean.name.toLowerCase().includes(query) ||
+                bean.origin.toLowerCase().includes(query)
+            );
+
+            if (results.length === 0) { resultsDiv.innerHTML = '<div class="empty-state">No beans found</div>'; return; }
+
+            resultsDiv.innerHTML = results.map((bean, index) => `
+                <div class="bean-result-item" onclick="selectBean(${coffeeBeans.indexOf(bean)})">
+                    <div class="bean-roaster">${bean.roaster} - ${bean.name}</div>
+                    <div class="bean-details">${bean.origin} • ${bean.process}</div>
+                    <div class="bean-details">🍯 ${bean.notes}</div>
+                </div>
+            `).join('');
         }
 
-        function resetTimer() {
-            clearInterval(timerInterval);
-            timerInterval = null;
-            elapsed = 0;
-            finalTime = "00:00.0";
-            document.getElementById('timer').textContent = finalTime;
+        function selectBean(index) {
+            selectedBean = coffeeBeans[index];
+            const displayDiv = document.getElementById('selectedBeanDisplay');
+            displayDiv.style.display = 'block';
+            displayDiv.innerHTML = `
+                <div class="selected-bean-display">
+                    <div style="font-weight: 600; margin-bottom: 4px;">${selectedBean.roaster} - ${selectedBean.name}</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                        ${selectedBean.origin} • ${selectedBean.process}<br>
+                        Notes: ${selectedBean.notes}
+                    </div>
+                    <button class="clear-btn" onclick="clearBeanSelection()">Clear</button>
+                </div>
+            `;
+            document.getElementById('beanSearch').value = '';
+            document.getElementById('beanResults').innerHTML = '';
+        }
+
+        function clearBeanSelection() {
+            selectedBean = null;
+            document.getElementById('selectedBeanDisplay').style.display = 'none';
+            document.getElementById('beanSearch').value = '';
         }
 
         function saveShot() {
             const shot = {
                 date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
                 time: finalTime,
+                bean: selectedBean ? `${selectedBean.roaster} - ${selectedBean.name}` : 'Unknown',
                 dose: document.getElementById('dose').value || '-',
                 yield: document.getElementById('yield').value || '-',
                 grind: document.getElementById('grind').value || '-',
                 notes: document.getElementById('notes').value
             };
-
             let history = JSON.parse(localStorage.getItem('espresso_history') || '[]');
             history.unshift(shot); 
             localStorage.setItem('espresso_history', JSON.stringify(history));
-            
             renderHistory();
             ['dose', 'yield', 'grind', 'notes'].forEach(id => document.getElementById(id).value = '');
+            clearBeanSelection();
             resetTimer();
         }
 
         function renderHistory() {
             const history = JSON.parse(localStorage.getItem('espresso_history') || '[]');
             const list = document.getElementById('history-list');
-            
-            if (history.length === 0) {
-                list.innerHTML = '<div class="empty-state">No shots logged yet. Brew something!</div>';
-                return;
-            }
-
+            if (history.length === 0) { list.innerHTML = '<div class="empty-state">No shots logged yet. Brew something!</div>'; return; }
             list.innerHTML = history.map(s => `
                 <div class="shot-card">
                     <div class="date">${s.date}</div>
-                    <div class="stats">
-                        <span>⏱️ ${s.time}</span>
-                        <span>⚖️ ${s.dose}g → ${s.yield}g</span>
-                    </div>
-                    <div class="stats">
-                        <span>⚙️ ${s.grind}</span>
-                    </div>
+                    ${s.bean !== 'Unknown' ? `<div class="bean-info">☕ ${s.bean}</div>` : ''}
+                    <div class="stats"><span>⏱️ ${s.time}</span><span>⚖️ ${s.dose}g → ${s.yield}g</span></div>
+                    <div class="stats"><span>⚙️ ${s.grind}</span></div>
                     ${s.notes ? `<div class="notes">"${s.notes}"</div>` : ''}
                 </div>
             `).join('');
         }
-
         renderHistory();
     </script>
 </body>
