@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="description" content="Bah_ngupi — a gamified cafe hopping passport and espresso dialer for Brunei Darussalam and Borneo.">
-  <meta name="theme-color" content="#0c0907">
+  <meta name="theme-color" content="#0a0705">
+  <meta name="color-scheme" content="dark">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -128,37 +129,57 @@
           <p class="muted greeting-copy">Every cup is a page. Collect stamps from every corner of Brunei.</p>
         </div>
 
-        <article class="card progress-card">
-          <div class="ring-wrap">
-            <svg class="progress-ring" viewBox="0 0 120 120" aria-hidden="true">
-              <circle class="ring-track" cx="60" cy="60" r="51"></circle>
-              <circle class="ring-bar" id="passportRing" cx="60" cy="60" r="51"></circle>
-            </svg>
-            <div class="ring-center">
-              <strong id="progressPct">0%</strong>
-              <span>explored</span>
+        <article class="passport-cover">
+          <div class="passport-cover-head">
+            <span class="passport-emblem" aria-hidden="true">
+              <svg class="icon"><use href="#i-logo"></use></svg>
+            </span>
+            <span class="passport-title">
+              <span class="passport-country">Brunei Darussalam</span>
+              <span class="passport-doc">Coffee passport</span>
+            </span>
+            <span class="passport-serial" id="passportSerial">BN · 0001</span>
+          </div>
+
+          <div class="passport-main">
+            <div class="ring-wrap">
+              <svg class="progress-ring" viewBox="0 0 120 120" aria-hidden="true">
+                <circle class="ring-track" cx="60" cy="60" r="51"></circle>
+                <circle class="ring-bar" id="passportRing" cx="60" cy="60" r="51"></circle>
+              </svg>
+              <div class="ring-center">
+                <strong id="progressPct">0%</strong>
+                <span>explored</span>
+              </div>
+            </div>
+            <div class="progress-copy">
+              <p class="eyebrow">Passport progress</p>
+              <h2 class="progress-title"><span id="statUnique">0</span> <span class="muted">of</span> <span id="statTotal">0</span> <span class="progress-title-sub">cafes</span></h2>
+              <p class="progress-note">Every stamp is a page in your Brunei coffee story.</p>
+              <div class="passport-stats">
+                <div><strong id="statVisits">0</strong><span>stamps</span></div>
+                <div><strong id="statDistricts">0</strong><span>districts</span></div>
+                <div><strong id="statPhotos">0</strong><span>photos</span></div>
+              </div>
             </div>
           </div>
-          <div class="progress-copy">
-            <p class="eyebrow">Passport progress</p>
-            <h2 class="progress-title"><span id="statUnique">0</span> <span class="muted">of</span> <span id="statTotal">0</span> <span class="progress-title-sub">cafes</span></h2>
-            <div class="mini-stats">
-              <div><strong id="statVisits">0</strong><span>stamps</span></div>
-              <div><strong id="statDistricts">0</strong><span>districts</span></div>
-              <div><strong id="statPhotos">0</strong><span>photos</span></div>
-            </div>
-            <button class="btn btn-primary btn-sm" data-nav="explore">
-              Find a cafe
-              <svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow"></use></svg>
-            </button>
-          </div>
+
+          <button class="btn btn-primary btn-block passport-cta" data-nav="explore">
+            Find a cafe
+            <svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow"></use></svg>
+          </button>
         </article>
 
-        <div class="section-head">
-          <h2>My stamps</h2>
-          <span class="pill" id="stampCountPill">0</span>
+        <div class="stamp-page">
+          <div class="section-head">
+            <div class="section-title">
+              <p class="eyebrow">Stamp collection</p>
+              <h2>My stamps</h2>
+            </div>
+            <span class="pill" id="stampCountPill">0</span>
+          </div>
+          <div class="stamp-grid" id="stampGrid"></div>
         </div>
-        <div class="stamp-grid" id="stampGrid"></div>
 
         <div class="section-head">
           <h2>Achievements</h2>
@@ -187,16 +208,18 @@
           </button>
         </div>
 
-        <div class="searchbar">
-          <svg class="icon searchbar-icon" aria-hidden="true"><use href="#i-search"></use></svg>
-          <label class="visually-hidden" for="cafeSearch">Search cafes</label>
-          <input id="cafeSearch" type="search" placeholder="Search cafe, area, or vibe…" autocomplete="off" enterkeyhint="search">
-          <button class="search-clear" id="clearSearch" aria-label="Clear search" hidden>
-            <svg class="icon icon-sm" aria-hidden="true"><use href="#i-close"></use></svg>
-          </button>
-        </div>
+        <div class="explore-controls">
+          <div class="searchbar">
+            <svg class="icon searchbar-icon" aria-hidden="true"><use href="#i-search"></use></svg>
+            <label class="visually-hidden" for="cafeSearch">Search cafes</label>
+            <input id="cafeSearch" type="search" placeholder="Search cafe, area, or vibe…" autocomplete="off" enterkeyhint="search">
+            <button class="search-clear" id="clearSearch" aria-label="Clear search" hidden>
+              <svg class="icon icon-sm" aria-hidden="true"><use href="#i-close"></use></svg>
+            </button>
+          </div>
 
-        <div class="chip-row" id="areaChips" role="group" aria-label="Filter by area"></div>
+          <div class="chip-row" id="areaChips" role="group" aria-label="Filter by area"></div>
+        </div>
 
         <div class="list-meta">
           <span id="cafeCount">0 cafes</span>
@@ -316,16 +339,39 @@
           </div>
         </div>
 
-        <article class="card profile-card">
-          <div class="profile-top">
+        <article class="passport-id">
+          <div class="passport-id-head">
             <div class="avatar-lg" id="profileAvatar">BN</div>
-            <div>
-              <p class="eyebrow">Member since <span id="profileJoined">today</span></p>
+            <div class="passport-id-name">
+              <p class="eyebrow">Passport holder</p>
               <h2 id="profileDisplayName">Kopi lover</h2>
-              <p class="muted small" id="profileHome">Brunei Darussalam</p>
+              <p class="small" id="profileHome">Brunei Darussalam</p>
             </div>
+            <span class="passport-id-seal" aria-hidden="true">
+              <svg class="icon"><use href="#i-logo"></use></svg>
+            </span>
           </div>
+          <dl class="passport-id-grid">
+            <div>
+              <dt>Member since</dt>
+              <dd id="profileJoined">today</dd>
+            </div>
+            <div>
+              <dt>Passport no.</dt>
+              <dd class="mono" id="profilePassportNo">BN 0000 0000</dd>
+            </div>
+            <div>
+              <dt>Home district</dt>
+              <dd id="profileIdDistrict">Not set</dd>
+            </div>
+          </dl>
+        </article>
 
+        <article class="card profile-edit">
+          <div class="card-head">
+            <h2>Passport details</h2>
+            <span class="pill pill--quiet">Editable</span>
+          </div>
           <div class="field">
             <label for="profileName">Passport name</label>
             <input id="profileName" type="text" maxlength="24" placeholder="Your name or nickname" autocomplete="nickname">
@@ -407,7 +453,7 @@
   </div>
 
   <!-- Bottom sheet -->
-  <div class="sheet" id="sheet" aria-hidden="true">
+  <div class="sheet" id="sheet" aria-hidden="true" inert>
     <div class="sheet-backdrop" data-close-sheet></div>
     <div class="sheet-panel" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
       <div class="sheet-head">
@@ -425,7 +471,7 @@
   </div>
 
   <!-- Stamp reveal -->
-  <div class="modal" id="stampModal" aria-hidden="true">
+  <div class="modal" id="stampModal" aria-hidden="true" inert>
     <div class="modal-backdrop" data-close-modal></div>
     <div class="modal-card stamp-reveal" role="dialog" aria-modal="true" aria-labelledby="stampModalTitle">
       <p class="eyebrow"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-spark"></use></svg> Stamp collected</p>

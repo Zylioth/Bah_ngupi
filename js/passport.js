@@ -456,19 +456,21 @@
     if (selectedArea !== "All" && !areas.includes(selectedArea)) {
       selectedArea = "All";
     }
-    const chips = ['<button class="chip ' + (selectedArea === "All" ? "is-active" : "") + '" data-area="All">All areas</button>']
-      .concat(
-        areas.map(
-          (area) =>
-            '<button class="chip ' +
-            (selectedArea === area ? "is-active" : "") +
-            '" data-area="' +
-            U.escapeHtml(area) +
-            '">' +
-            U.escapeHtml(area) +
-            "</button>"
-        )
-      )
+    const counts = new Map();
+    cafes.forEach((cafe) => counts.set(cafe.area, (counts.get(cafe.area) || 0) + 1));
+    const chip = (label, value, count) =>
+      '<button class="chip ' +
+      (selectedArea === value ? "is-active" : "") +
+      '" data-area="' +
+      U.escapeHtml(value) +
+      '">' +
+      "<span>" +
+      U.escapeHtml(label) +
+      '</span><span class="chip-count">' +
+      count +
+      "</span></button>";
+    const chips = [chip("All areas", "All", cafes.length)]
+      .concat(areas.map((area) => chip(area, area, counts.get(area) || 0)))
       .join("");
     emptyState.areaChips.innerHTML = chips;
   }
@@ -499,43 +501,41 @@
     const isFav = store.isFavorite(cafe.id);
     const colors = colorOf(cafe);
     const tags = (cafe.tags || []).slice(0, 2);
+    const visited = visits.length > 0;
     return (
-      '<article class="cafe-card">' +
+      '<article class="cafe-card' +
+      (visited ? " is-visited" : "") +
+      '">' +
       '<button class="cafe-open" data-action="open-cafe" data-cafe-id="' +
       U.escapeHtml(cafe.id) +
       '">' +
-      '<span class="cafe-cover" style="' +
-      coverStyle(cafe) +
-      '">' +
-      '<span class="cafe-cover-mono">' +
+      '<span class="cafe-mono" style="background:linear-gradient(135deg,' +
+      colors.color +
+      "," +
+      colors.color2 +
+      ')">' +
       U.escapeHtml(U.initials(cafe.name)) +
+      (visited ? '<span class="cafe-mono-dot" aria-hidden="true"></span>' : "") +
       "</span>" +
-      '<span class="cafe-cover-top">' +
-      '<span class="tag">' +
-      U.escapeHtml(cafe.category) +
-      "</span>" +
-      (visits.length
-        ? '<span class="tag tag--visited">✓ ' + visits.length + " " + U.plural(visits.length, "stamp") + "</span>"
-        : '<span class="tag">Not visited</span>') +
-      "</span></span>" +
       '<span class="cafe-body">' +
       '<span class="cafe-title-row"><strong>' +
       U.escapeHtml(cafe.name) +
-      "</strong></span>" +
+      '</strong><span class="cafe-category">' +
+      U.escapeHtml(cafe.category) +
+      "</span></span>" +
       '<span class="cafe-meta">' +
       U.escapeHtml(cafe.area) +
       " · " +
       U.escapeHtml(cafe.district) +
       "</span>" +
+      '<span class="cafe-foot">' +
       '<span class="cafe-tags">' +
       tags.map((tag) => '<span class="cafe-tag">' + U.escapeHtml(tag) + "</span>").join("") +
       "</span>" +
-      '<span class="cafe-foot">' +
-      "<span>☕ " +
-      (visits.length ? "Last visit " + U.escapeHtml(U.relativeDay(visits[0].date)) : "Be the first to stamp") +
-      "</span>" +
-      '<span class="stamp-tally">' +
-      (visits.length ? String(visits.length).padStart(2, "0") + " stamps" : "") +
+      '<span class="stamp-tally' +
+      (visited ? "" : " stamp-tally--new") +
+      '">' +
+      (visited ? visits.length + " " + U.plural(visits.length, "stamp") : "Not visited") +
       "</span>" +
       "</span></span></button>" +
       '<button class="cafe-fav" data-action="toggle-fav" data-cafe-id="' +
@@ -594,7 +594,7 @@
   function visitCard(visit) {
     const photo = photoSrc(visit)
       ? '<img src="' + photoSrc(visit) + '" alt="Check-in photo" loading="lazy">'
-      : "☕";
+      : '<svg class="icon" aria-hidden="true"><use href="#i-logo"></use></svg>';
     return (
       '<div class="visit-card">' +
       '<div class="visit-thumb">' +
@@ -672,7 +672,9 @@
       '<span class="tag">' +
       U.escapeHtml(cafe.category) +
       "</span>" +
-      (visits.length ? '<span class="tag tag--visited">✓ Visited</span>' : "") +
+      (visits.length
+        ? '<span class="tag tag--visited"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg> Visited</span>'
+        : "") +
       (cafe.custom ? '<span class="tag">Added by you</span>' : "") +
       "</div></div>" +
       '<p class="detail-desc">' +
@@ -1061,6 +1063,7 @@
       : "";
 
     modal.classList.add("is-open");
+    modal.removeAttribute("inert");
     modal.setAttribute("aria-hidden", "false");
     U.syncOverlayLock();
     const close = modal.querySelector("[data-close-modal]");
@@ -1071,6 +1074,7 @@
     const modal = document.getElementById("stampModal");
     if (!modal) return;
     modal.classList.remove("is-open");
+    modal.setAttribute("inert", "");
     modal.setAttribute("aria-hidden", "true");
     U.syncOverlayLock();
   }

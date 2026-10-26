@@ -24,6 +24,17 @@
     profile: "Your passport — Bah_ngupi"
   };
 
+  function passportNumber(profile) {
+    const joined = new Date(profile.joined);
+    const year = Number.isNaN(joined.getTime()) ? new Date().getFullYear() : joined.getFullYear();
+    const seed = String(profile.joined || "") + "|" + String(profile.name || "bah-ngupi");
+    let hash = 0;
+    for (let index = 0; index < seed.length; index += 1) {
+      hash = (hash * 31 + seed.charCodeAt(index)) >>> 0;
+    }
+    return "BN " + year + " " + String(hash % 10000).padStart(4, "0");
+  }
+
   const state = {
     customCafes: [],
     visits: [],
@@ -501,6 +512,14 @@
 
     const home = document.getElementById("profileHome");
     if (home) home.textContent = profile.district ? profile.district + " · Brunei" : "Brunei Darussalam";
+
+    const serial = passportNumber(profile);
+    const coverSerial = document.getElementById("passportSerial");
+    if (coverSerial) coverSerial.textContent = serial;
+    const profileSerial = document.getElementById("profilePassportNo");
+    if (profileSerial) profileSerial.textContent = serial;
+    const idDistrict = document.getElementById("profileIdDistrict");
+    if (idDistrict) idDistrict.textContent = profile.district || "Not set";
 
     const setText = (id, value) => {
       const node = document.getElementById(id);

@@ -378,6 +378,7 @@
     bodyNode.scrollTop = 0;
 
     sheet.classList.add("is-open");
+    sheet.removeAttribute("inert");
     sheet.setAttribute("aria-hidden", "false");
     syncOverlayLock();
 
@@ -393,6 +394,7 @@
     const sheet = document.getElementById("sheet");
     if (!sheet || !sheet.classList.contains("is-open")) return;
     sheet.classList.remove("is-open");
+    sheet.setAttribute("inert", "");
     sheet.setAttribute("aria-hidden", "true");
     syncOverlayLock();
     if (lastFocused && typeof lastFocused.focus === "function") {

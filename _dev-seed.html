@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Seed</title></head>
+<body>
+<script>
+  const now = Date.now();
+  const picks = [
+    ["roasted-sip-jerudong", "Flat white", 5, "Silky, cocoa finish."],
+    ["noice-kiulap", "Iced latte", 4, "Bright and easy."],
+    ["piccolo-bsb", "Cortado", 5, "Best balance in town."],
+    ["lanes-microbakery", "Long black", 4, "Clean, fruity."],
+    ["salted-batu-satu", "Butterscotch latte", 3, "Sweet but fun."],
+    ["kopifix-tutong", "Kopi susu", 4, "Comfort in a cup."],
+    ["beanery-kb", "Mocha", 4, "Rich and warming."],
+    ["roasted-sip-jerudong", "Espresso", 5, "Second visit, still great."]
+  ];
+  const visits = picks.map(([cafeId, drink, rating, notes], index) => ({
+    id: "visit_demo_" + index,
+    cafeId,
+    drink,
+    rating,
+    notes,
+    photo: "",
+    date: new Date(now - index * 3 * 86400000).toISOString()
+  }));
+  localStorage.setItem("bn_visits_v1", JSON.stringify(visits));
+  localStorage.setItem("bn_favorites_v1", JSON.stringify(["roasted-sip-jerudong", "noice-kiulap", "piccolo-bsb", "beanery-kb"]));
+  localStorage.setItem("bn_profile_v1", JSON.stringify({ name: "Aiman", district: "Brunei-Muara", joined: "2026-06-18T09:00:00.000Z" }));
+  const view = new URLSearchParams(location.search).get("view") || "passport";
+  location.replace("/#" + view);
+</script>
+</body>
+</html>
