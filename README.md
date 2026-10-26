@@ -18,7 +18,7 @@ Check in at local cafes, add a photo of your cup, collect a custom digital stamp
 - Duplicate visits are allowed — every visit earns its own dated stamp
 
 ### Cafe directory
-- 20 starter cafes across Brunei-Muara, Tutong and Belait, curated from public Brunei coffee guides
+- 37 starter cafes across Brunei-Muara, Tutong, Belait and Temburong, curated from public Brunei coffee guides
 - Search by cafe, area, vibe, menu or district, with a sticky search/filter bar
 - Area chips with cafe counts + favourites filter
 - Dense scan-friendly rows with monogram, category, tags and stamp tally
