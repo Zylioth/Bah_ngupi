@@ -4,23 +4,24 @@ A gamified, mobile-first **cafe hopping passport & tracker** for Brunei Darussal
 
 Check in at local cafes, add a photo of your cup, collect a custom digital stamp, and watch your passport (and badge shelf) fill up. The espresso dialer times your shots and keeps a recipe diary for dialing in beans.
 
-> **v1.0** — no build step, no accounts, no tracking. Everything lives on your device.
+> **v2.0** — editorial coffee-passport redesign, self-hosted type, no build step, no accounts, no tracking. Everything lives on your device.
 
 ---
 
 ## Features
 
 ### Passport
-- Progress ring showing unique cafes visited vs. the whole directory
-- Digital stamps generated per check-in: cafe monogram, area, month and year
+- Physical-passport cover with live progress ring and a deterministic passport number
+- Paper stamp page: digital stamps generated per check-in with cafe monogram, area, month and year
 - 10 achievements (First Sip, Cafe Crawler, District Hopper, Sweet Spot, and more)
 - Recent-sip timeline with photo thumbnails
 - Duplicate visits are allowed — every visit earns its own dated stamp
 
 ### Cafe directory
 - 20 starter cafes across Brunei-Muara, Tutong and Belait, curated from public Brunei coffee guides
-- Search by cafe, area, vibe, menu or district
-- Area chips + favourites filter
+- Search by cafe, area, vibe, menu or district, with a sticky search/filter bar
+- Area chips with cafe counts + favourites filter
+- Dense scan-friendly rows with monogram, category, tags and stamp tally
 - Add, edit and delete your own cafes
 - One-tap Google Maps search for every cafe
 
@@ -44,6 +45,17 @@ Check in at local cafes, add a photo of your cup, collect a custom digital stamp
 - Service worker caches the shell so the passport catalog and timer work offline
 - Photos are compressed locally and **never uploaded**
 - Export/import a JSON backup; reset wipes the device data
+
+---
+
+## Design system
+
+The v2 interface treats the app like a **physical coffee passport** rather than a dashboard:
+
+- **Surfaces** — warm espresso shell (`#0a0705`) with ink-and-oxblood accents, plus paper (`#f1e4cf`) panels for the stamp page and profile ID card.
+- **Type** — Fraunces for display headlines, Manrope for UI copy, JetBrains Mono for passport numbers, timers and stats. All three are self-hosted variable fonts.
+- **Layout** — mobile-first shell capped at 480px, floating rounded bottom dock, sticky directory search/filter bar, compact scan-friendly cafe rows.
+- **Accessibility** — AA contrast, visible focus rings, `inert` closed sheets/modals, skip link, reduced-motion support and semantic landmarks.
 
 ---
 
@@ -72,7 +84,7 @@ bah-ngupi/
 ├── _headers                 Netlify security headers + CSP
 ├── vercel.json              Vercel security headers + caching
 ├── css/
-│   └── style.css            Coffee-dark design system, mobile-first layout
+│   └── style.css            Editorial coffee-passport design system, mobile-first layout
 ├── js/
 │   ├── utils.js             Escaping, storage, image compression, sheet/toast UI
 │   ├── cafes.js             Starter Brunei cafe + coffee bean databases
@@ -80,6 +92,7 @@ bah-ngupi/
 │   ├── dialer.js            Shot timer, bean picker, recipe log
 │   └── app.js               Store, router, profile, import/export, PWA
 ├── assets/
+│   ├── fonts/               Self-hosted Fraunces, Manrope, JetBrains Mono (OFL)
 │   └── icons/               Generated PNG icons + SVG favicon
 └── tools/
     └── generate-icons.js    Dependency-free PNG icon generator
@@ -129,9 +142,9 @@ Imports are validated and normalised before replacing state.
 - **Storage**: every `localStorage` write goes through `writeJSON()` and is wrapped in `try/catch`. Quota failures are surfaced; check-ins retry without the photo.
 - **CSP**: `default-src 'self'`, scripts only from self, images limited to self/data/blob. Google Maps opens as a normal top-level navigation, not an embedded script.
 - **Photo data URLs** are validated on import (`data:image/jpeg|png|webp;base64`) and size-capped.
-- **No third-party fonts or analytics** — the app is fully self-contained and offline-friendly.
+- **No runtime third-party requests** — fonts are self-hosted under `assets/fonts` (Fraunces, Manrope, JetBrains Mono, SIL OFL) and precached by the service worker. No analytics, no CDN, so the app stays fully self-contained and offline-friendly.
 
-> `style-src` allows `'unsafe-inline'` because cover gradients and timer progress use inline style properties. Scripts remain locked down.
+> `style-src` allows `'unsafe-inline'` because cover gradients and timer progress use inline style properties. Fonts load from `'self'` only. Scripts remain locked down.
 
 ---
 
