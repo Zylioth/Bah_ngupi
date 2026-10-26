@@ -1,0 +1,26 @@
+# Bah_ngupi — Netlify security headers
+# Deploy this folder as a static site. HTTPS is automatic on Netlify.
+
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=(self), payment=()
+  Cross-Origin-Opener-Policy: same-origin
+  Content-Security-Policy: default-src 'self'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'
+  Cache-Control: public, max-age=0, must-revalidate
+
+/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/manifest.json
+  Cache-Control: public, max-age=3600
+
+/css/*
+  Cache-Control: public, max-age=3600, must-revalidate
+
+/js/*
+  Cache-Control: public, max-age=3600, must-revalidate
+
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable

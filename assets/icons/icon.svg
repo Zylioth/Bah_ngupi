@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Bah_ngupi coffee bean passport mark">
+  <defs>
+    <radialGradient id="bg" cx="32%" cy="16%" r="88%">
+      <stop offset="0" stop-color="#7a4a24"/>
+      <stop offset="0.45" stop-color="#2a1a11"/>
+      <stop offset="1" stop-color="#0c0907"/>
+    </radialGradient>
+    <linearGradient id="bean" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0" stop-color="#f3d3a4"/>
+      <stop offset="0.55" stop-color="#d09a5c"/>
+      <stop offset="1" stop-color="#b06c37"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <circle cx="256" cy="256" r="168" fill="none" stroke="#e0aa6d" stroke-opacity="0.55" stroke-width="7" stroke-dasharray="15 12"/>
+  <circle cx="256" cy="256" r="142" fill="none" stroke="#f7efe3" stroke-opacity="0.16" stroke-width="2"/>
+  <g transform="rotate(-35 256 256)">
+    <ellipse cx="258" cy="266" rx="62" ry="98" fill="#000" opacity="0.28"/>
+    <ellipse cx="256" cy="256" rx="58" ry="93" fill="url(#bean)"/>
+    <path d="M256 170 C 232 196, 280 226, 250 258 S 230 322, 256 342" fill="none" stroke="#26160f" stroke-width="12" stroke-linecap="round"/>
+  </g>
+  <path d="M348 130c2 9 5 12 14 14-9 2-12 5-14 14-2-9-5-12-14-14 9-2 12-5 14-14Z" fill="#f7d6a6" opacity="0.85"/>
+</svg>

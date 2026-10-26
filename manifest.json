@@ -1,0 +1,50 @@
+{
+  "id": "/",
+  "name": "Bah_ngupi — Cafe Hopping Passport",
+  "short_name": "Bah_ngupi",
+  "description": "A gamified cafe hopping passport and espresso dialer for Brunei Darussalam and Borneo.",
+  "lang": "en",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
+  "background_color": "#0c0907",
+  "theme_color": "#0c0907",
+  "categories": ["food", "travel", "lifestyle"],
+  "icons": [
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "My passport",
+      "short_name": "Passport",
+      "url": "./#passport",
+      "description": "See your collected cafe stamps"
+    },
+    {
+      "name": "Espresso dialer",
+      "short_name": "Dialer",
+      "url": "./#dialer",
+      "description": "Time a shot and log a recipe"
+    }
+  ]
+}

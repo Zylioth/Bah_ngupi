@@ -1,233 +1,455 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bah_ngupi | Espresso Dialer</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color: #12100e;
-            --card-bg: #1e1b18;
-            --text-primary: #f5f0e6;
-            --text-secondary: #a89f91;
-            --accent: #d4a373;
-            --accent-hover: #c68e57;
-            --success: #6b9080;
-            --danger: #e07a5f;
-            --border: #2d2824;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg-color); color: var(--text-primary); max-width: 480px; margin: 0 auto; padding: 24px 20px; min-height: 100vh; }
-        h1 { text-align: center; font-size: 1.5rem; font-weight: 600; color: var(--accent); margin-bottom: 24px; letter-spacing: -0.5px; }
-        .timer-container { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 24px; text-align: center; margin-bottom: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
-        .timer { font-family: 'JetBrains Mono', monospace; font-size: 3.5rem; color: var(--text-primary); margin-bottom: 20px; font-variant-numeric: tabular-nums; }
-        .timer-controls { display: flex; gap: 10px; justify-content: center; }
-        .btn { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer; font-size: 0.95rem; font-weight: 600; transition: all 0.2s ease; flex: 1; max-width: 120px; }
-        .btn:active { transform: scale(0.96); }
-        .btn-start { background: var(--success); color: white; }
-        .btn-stop { background: var(--danger); color: white; }
-        .btn-reset { background: var(--border); color: var(--text-secondary); }
-        .bean-search-container { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 24px; }
-        .search-box { position: relative; margin-bottom: 12px; }
-        .search-box input { padding-left: 40px; }
-        .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); font-size: 1.1rem; }
-        .bean-results { max-height: 200px; overflow-y: auto; margin-top: 10px; }
-        .bean-result-item { padding: 12px; background: var(--bg-color); border-radius: 8px; margin-bottom: 8px; cursor: pointer; border: 1px solid var(--border); transition: all 0.2s; }
-        .bean-result-item:hover { border-color: var(--accent); background: #25211d; }
-        .bean-roaster { font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
-        .bean-details { font-size: 0.85rem; color: var(--text-secondary); }
-        .selected-bean-display { background: var(--bg-color); padding: 12px; border-radius: 8px; margin-top: 10px; border-left: 3px solid var(--accent); }
-        .form-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 24px; }
-        .input-row { display: flex; gap: 12px; }
-        .input-group { margin-bottom: 16px; flex: 1; }
-        label { display: block; margin-bottom: 6px; font-size: 0.85rem; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
-        input, textarea { width: 100%; padding: 12px; background: var(--bg-color); border: 1px solid var(--border); color: var(--text-primary); border-radius: 8px; font-size: 1rem; font-family: 'Inter', sans-serif; transition: border-color 0.2s; }
-        input:focus, textarea:focus { outline: none; border-color: var(--accent); }
-        textarea { resize: vertical; min-height: 60px; }
-        .btn-save { background: var(--accent); color: #12100e; width: 100%; padding: 14px; font-size: 1rem; margin-top: 8px; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; }
-        .history { border-top: 1px solid var(--border); padding-top: 20px; }
-        .history h3 { font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 16px; font-weight: 500; }
-        .shot-card { background: var(--card-bg); padding: 16px; margin-bottom: 12px; border-radius: 12px; border-left: 4px solid var(--accent); font-size: 0.9rem; line-height: 1.5; }
-        .shot-card .date { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 8px; }
-        .shot-card .stats { display: flex; justify-content: space-between; margin-bottom: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
-        .shot-card .bean-info { color: var(--accent); font-weight: 500; margin-bottom: 8px; }
-        .shot-card .notes { color: var(--text-secondary); font-style: italic; border-top: 1px solid var(--border); padding-top: 8px; margin-top: 8px; }
-        .empty-state { text-align: center; color: var(--text-secondary); padding: 20px; font-size: 0.9rem; }
-        .clear-btn { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; margin-top: 8px; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Bah_ngupi — a gamified cafe hopping passport and espresso dialer for Brunei Darussalam and Borneo.">
+  <meta name="theme-color" content="#0c0907">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Bah_ngupi">
+  <title>Bah_ngupi — Cafe Hopping Passport</title>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon-180.png">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <a class="skip-link" href="#views">Skip to content</a>
 
-    <h1>☕ Bah_ngupi</h1>
+  <svg class="icon-sprite" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-logo" viewBox="0 0 24 24">
+      <path d="M4 8h11v5.5A4.5 4.5 0 0 1 10.5 18h-2A4.5 4.5 0 0 1 4 13.5V8Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+      <path d="M15 9.5h1.6a2.4 2.4 0 0 1 0 4.8H15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+      <path d="M3 20h14M8 5.5c0-1 .8-1 .8-2M11.5 5.5c0-1 .8-1 .8-2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-passport" viewBox="0 0 24 24">
+      <path d="M6 3.5h11a1.5 1.5 0 0 1 1.5 1.5v14A1.5 1.5 0 0 1 17 20.5H6A1.5 1.5 0 0 1 4.5 19V5A1.5 1.5 0 0 1 6 3.5Z" fill="none" stroke="currentColor" stroke-width="1.7"/>
+      <circle cx="12" cy="11" r="3.2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+      <path d="M8 17h8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-compass" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.7"/>
+      <path d="m15.3 8.7-1.8 4.8-4.8 1.8 1.8-4.8 4.8-1.8Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-timer" viewBox="0 0 24 24">
+      <circle cx="12" cy="13" r="7.5" fill="none" stroke="currentColor" stroke-width="1.7"/>
+      <path d="M12 9.5V13l2.4 1.6M9.5 3h5M12 3v2.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-user" viewBox="0 0 24 24">
+      <circle cx="12" cy="8.5" r="3.5" fill="none" stroke="currentColor" stroke-width="1.7"/>
+      <path d="M5 20c.7-3.4 3.5-5.5 7-5.5s6.3 2.1 7 5.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24">
+      <path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-search" viewBox="0 0 24 24">
+      <circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.7"/>
+      <path d="m16 16 4 4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24">
+      <path d="M12 20s-7.5-4.6-7.5-9.6A4.4 4.4 0 0 1 12 7.2a4.4 4.4 0 0 1 7.5 3.2C19.5 15.4 12 20 12 20Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-heart-filled" viewBox="0 0 24 24">
+      <path d="M12 20s-7.5-4.6-7.5-9.6A4.4 4.4 0 0 1 12 7.2a4.4 4.4 0 0 1 7.5 3.2C19.5 15.4 12 20 12 20Z" fill="currentColor"/>
+    </symbol>
+    <symbol id="i-close" viewBox="0 0 24 24">
+      <path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24">
+      <path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1.2-2h6.6L16.5 7h2A1.5 1.5 0 0 1 20 8.5v9A1.5 1.5 0 0 1 18.5 19h-13A1.5 1.5 0 0 1 4 17.5v-9Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+      <circle cx="12" cy="13" r="3.2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    </symbol>
+    <symbol id="i-star" viewBox="0 0 24 24">
+      <path d="m12 3.8 2.5 5.1 5.6.8-4 4 .9 5.6-5-2.7-5 2.7.9-5.6-4-4 5.6-.8L12 3.8Z" fill="currentColor"/>
+    </symbol>
+    <symbol id="i-check" viewBox="0 0 24 24">
+      <path d="m5 12.5 4.5 4.5L19 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24">
+      <path d="M5 7h14M10 7V5.5A1.5 1.5 0 0 1 11.5 4h1A1.5 1.5 0 0 1 14 5.5V7M7 7l1 12.5h8L17 7M10.5 10.5v6M13.5 10.5v6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-download" viewBox="0 0 24 24">
+      <path d="M12 4v10m0 0 4-4m-4 4-4-4M5 19h14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24">
+      <path d="M12 15V5m0 0 4 4m-4-4L8 9M5 19h14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-map" viewBox="0 0 24 24">
+      <path d="M12 21s6-5.2 6-10a6 6 0 1 0-12 0c0 4.8 6 10 6 10Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+      <circle cx="12" cy="10.7" r="2.2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    </symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.7"/>
+      <path d="M12 7.5V12l3 2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-bean" viewBox="0 0 24 24">
+      <ellipse cx="12" cy="12" rx="5.2" ry="8" transform="rotate(38 12 12)" fill="none" stroke="currentColor" stroke-width="1.7"/>
+      <path d="M8.6 8.4c2.2 1.2 1.6 4.3 3.4 5.2 1.8.9 2.3-1.2 3.6-.4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24">
+      <path d="M5 12h14m0 0-5-5m5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24">
+      <rect x="5.5" y="10" width="13" height="9.5" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.7"/>
+      <path d="M8.5 10V7.8a3.5 3.5 0 0 1 7 0V10" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24">
+      <path d="M12 3c.6 4.6 1.9 5.9 6.5 6.5C13.9 10.1 12.6 11.4 12 16c-.6-4.6-1.9-5.9-6.5-6.5C10.1 8.9 11.4 7.6 12 3Z" fill="currentColor"/>
+      <path d="M18.5 15.5c.3 2 .9 2.6 2.9 2.9-2 .3-2.6.9-2.9 2.9-.3-2-.9-2.6-2.9-2.9 2-.3 2.6-.9 2.9-2.9Z" fill="currentColor"/>
+    </symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24">
+      <path d="M4.5 19.5h4l10-10a2.1 2.1 0 0 0-3-3l-10 10v3Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+      <path d="m13.5 7 3 3" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    </symbol>
+  </svg>
 
-    <div class="timer-container">
-        <div id="timer" class="timer">00:00.0</div>
-        <div class="timer-controls">
-            <button class="btn btn-start" onclick="startTimer()">Start</button>
-            <button class="btn btn-stop" onclick="stopTimer()">Stop</button>
-            <button class="btn btn-reset" onclick="resetTimer()">Reset</button>
+  <div class="app-shell">
+    <header class="topbar">
+      <button class="brand" data-nav="passport">
+        <span class="brand-mark"><svg class="icon" aria-hidden="true"><use href="#i-logo"></use></svg></span>
+        <span class="brand-text">
+          <span class="brand-name">Bah_ngupi</span>
+          <span class="brand-sub">Cafe passport · Brunei</span>
+        </span>
+        <span class="visually-hidden">Home</span>
+      </button>
+      <button class="avatar-btn" id="topAvatar" data-nav="profile" aria-label="Open profile (BN)">BN</button>
+    </header>
+
+    <main class="views" id="views">
+      <!-- ══════════════ PASSPORT ══════════════ -->
+      <section class="view is-active" id="view-passport" data-view="passport" aria-labelledby="passportTitle">
+        <div class="greeting">
+          <p class="eyebrow" id="passportDate">Today</p>
+          <h1 class="display" id="passportTitle">Selamat ngupi, <span id="passportName">friend</span>.</h1>
+          <p class="muted greeting-copy">Every cup is a page. Collect stamps from every corner of Brunei.</p>
         </div>
-    </div>
 
-    <div class="bean-search-container">
-        <label>🔍 Search Coffee Beans</label>
-        <div class="search-box">
-            <span class="search-icon"></span>
-            <input type="text" id="beanSearch" placeholder="Type roaster (e.g., Roasted Sip)..." oninput="searchBeans()">
-        </div>
-        <div id="beanResults" class="bean-results"></div>
-        <div id="selectedBeanDisplay" style="display: none;"></div>
-    </div>
-
-    <div class="form-card">
-        <div class="input-row">
-            <div class="input-group">
-                <label>Dose In (g)</label>
-                <input type="number" id="dose" step="0.1" placeholder="18.0">
+        <article class="card progress-card">
+          <div class="ring-wrap">
+            <svg class="progress-ring" viewBox="0 0 120 120" aria-hidden="true">
+              <circle class="ring-track" cx="60" cy="60" r="51"></circle>
+              <circle class="ring-bar" id="passportRing" cx="60" cy="60" r="51"></circle>
+            </svg>
+            <div class="ring-center">
+              <strong id="progressPct">0%</strong>
+              <span>explored</span>
             </div>
-            <div class="input-group">
-                <label>Yield Out (g)</label>
-                <input type="number" id="yield" step="0.1" placeholder="36.0">
+          </div>
+          <div class="progress-copy">
+            <p class="eyebrow">Passport progress</p>
+            <h2 class="progress-title"><span id="statUnique">0</span> <span class="muted">of</span> <span id="statTotal">0</span> <span class="progress-title-sub">cafes</span></h2>
+            <div class="mini-stats">
+              <div><strong id="statVisits">0</strong><span>stamps</span></div>
+              <div><strong id="statDistricts">0</strong><span>districts</span></div>
+              <div><strong id="statPhotos">0</strong><span>photos</span></div>
             </div>
+            <button class="btn btn-primary btn-sm" data-nav="explore">
+              Find a cafe
+              <svg class="icon icon-sm" aria-hidden="true"><use href="#i-arrow"></use></svg>
+            </button>
+          </div>
+        </article>
+
+        <div class="section-head">
+          <h2>My stamps</h2>
+          <span class="pill" id="stampCountPill">0</span>
         </div>
-        <div class="input-group">
-            <label>Grind Size</label>
-            <input type="text" id="grind" placeholder="e.g., 14 clicks, 5.5mm">
+        <div class="stamp-grid" id="stampGrid"></div>
+
+        <div class="section-head">
+          <h2>Achievements</h2>
+          <span class="pill" id="achievementCount">0 / 0</span>
         </div>
-        <div class="input-group">
-            <label>Tasting Notes</label>
-            <textarea id="notes" rows="2" placeholder="Sour, chocolatey, balanced..."></textarea>
+        <div class="badge-scroll" id="achievementStrip"></div>
+
+        <div class="section-head">
+          <h2>Recent sips</h2>
+          <button class="link-btn" data-nav="explore">Explore</button>
         </div>
-        <button class="btn btn-save" onclick="saveShot()">Save Recipe</button>
+        <div class="timeline" id="recentVisits"></div>
+
+        <p class="disclaimer">Your passport lives on this device. Export a backup from your profile before switching phones.</p>
+      </section>
+
+      <!-- ══════════════ EXPLORE ══════════════ -->
+      <section class="view" id="view-explore" data-view="explore" aria-labelledby="exploreTitle">
+        <div class="view-head">
+          <div>
+            <p class="eyebrow">The directory</p>
+            <h1 class="display" id="exploreTitle">Find your next cup.</h1>
+          </div>
+          <button class="icon-btn icon-btn--accent" data-action="add-cafe" aria-label="Add a cafe">
+            <svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>
+          </button>
+        </div>
+
+        <div class="searchbar">
+          <svg class="icon searchbar-icon" aria-hidden="true"><use href="#i-search"></use></svg>
+          <label class="visually-hidden" for="cafeSearch">Search cafes</label>
+          <input id="cafeSearch" type="search" placeholder="Search cafe, area, or vibe…" autocomplete="off" enterkeyhint="search">
+          <button class="search-clear" id="clearSearch" aria-label="Clear search" hidden>
+            <svg class="icon icon-sm" aria-hidden="true"><use href="#i-close"></use></svg>
+          </button>
+        </div>
+
+        <div class="chip-row" id="areaChips" role="group" aria-label="Filter by area"></div>
+
+        <div class="list-meta">
+          <span id="cafeCount">0 cafes</span>
+          <button class="chip chip--fav" id="favouritesToggle" aria-pressed="false">
+            <svg class="icon icon-sm" aria-hidden="true"><use href="#i-heart"></use></svg>
+            Favourites
+          </button>
+        </div>
+
+        <div class="cafe-list" id="cafeList"></div>
+
+        <button class="add-cafe-card" data-action="add-cafe">
+          <span class="add-cafe-icon"><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg></span>
+          <span>
+            <strong>Know a hidden gem?</strong>
+            <span class="muted small">Add your own cafe to the passport</span>
+          </span>
+        </button>
+
+        <p class="disclaimer">Starter directory curated from public Brunei coffee guides. Details can change — check the cafe on Maps before you go.</p>
+      </section>
+
+      <!-- ══════════════ DIALER ══════════════ -->
+      <section class="view" id="view-dialer" data-view="dialer" aria-labelledby="dialerTitle">
+        <div class="view-head">
+          <div>
+            <p class="eyebrow">Home barista</p>
+            <h1 class="display" id="dialerTitle">Espresso dialer.</h1>
+          </div>
+          <span class="pill pill--accent">Beta</span>
+        </div>
+
+        <article class="card timer-card">
+          <div class="dial-wrap">
+            <svg class="timer-dial" viewBox="0 0 220 220" aria-hidden="true">
+              <circle class="dial-track" cx="110" cy="110" r="96"></circle>
+              <circle class="dial-ticks" cx="110" cy="110" r="104"></circle>
+              <circle class="dial-bar" id="timerRing" cx="110" cy="110" r="96"></circle>
+            </svg>
+            <div class="timer-readout">
+              <span class="eyebrow">Shot time</span>
+              <strong class="timer-value mono" id="shotTimer" aria-live="off">00:00.0</strong>
+              <span class="timer-hint" id="timerHint">Target 25–32s</span>
+            </div>
+          </div>
+          <div class="timer-actions">
+            <button id="timerStart" class="btn btn-primary">
+              <svg class="icon icon-sm" aria-hidden="true"><use href="#i-spark"></use></svg>
+              Start
+            </button>
+            <button id="timerStop" class="btn btn-ghost" disabled>Stop</button>
+            <button id="timerReset" class="btn btn-ghost">Reset</button>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-head">
+            <h2>Log a shot</h2>
+            <span class="pill" id="shotRatio">1 : 2.0</span>
+          </div>
+
+          <div class="field">
+            <label for="beanSearch">Bean</label>
+            <div class="bean-picker">
+              <div class="bean-input-wrap">
+                <svg class="icon searchbar-icon" aria-hidden="true"><use href="#i-bean"></use></svg>
+                <input id="beanSearch" type="search" placeholder="Search roaster or bean…" autocomplete="off" aria-autocomplete="list" aria-controls="beanResults">
+              </div>
+              <div class="bean-results" id="beanResults" role="listbox" aria-label="Bean suggestions" hidden></div>
+              <div class="selected-bean" id="selectedBean" hidden></div>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="doseInput">Dose in (g)</label>
+              <input id="doseInput" type="number" inputmode="decimal" step="0.1" min="0" placeholder="18.0">
+            </div>
+            <div class="field">
+              <label for="yieldInput">Yield out (g)</label>
+              <input id="yieldInput" type="number" inputmode="decimal" step="0.1" min="0" placeholder="36.0">
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="grindInput">Grind setting</label>
+              <input id="grindInput" type="text" maxlength="40" placeholder="e.g. 14 clicks">
+            </div>
+            <div class="field">
+              <label for="timeInput">Shot time</label>
+              <input id="timeInput" type="text" maxlength="8" placeholder="00:28.0">
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="shotNotes">Tasting notes</label>
+            <textarea id="shotNotes" rows="2" maxlength="180" placeholder="Sour, chocolatey, balanced…"></textarea>
+          </div>
+
+          <button id="saveShotBtn" class="btn btn-primary btn-block">Save shot</button>
+        </article>
+
+        <div class="section-head">
+          <h2>Recent shots</h2>
+          <span class="pill" id="shotCount">0</span>
+        </div>
+        <div class="shot-list" id="shotHistory"></div>
+      </section>
+
+      <!-- ══════════════ PROFILE ══════════════ -->
+      <section class="view" id="view-profile" data-view="profile" aria-labelledby="profileTitle">
+        <div class="view-head">
+          <div>
+            <p class="eyebrow">Your corner</p>
+            <h1 class="display" id="profileTitle">Passport holder.</h1>
+          </div>
+        </div>
+
+        <article class="card profile-card">
+          <div class="profile-top">
+            <div class="avatar-lg" id="profileAvatar">BN</div>
+            <div>
+              <p class="eyebrow">Member since <span id="profileJoined">today</span></p>
+              <h2 id="profileDisplayName">Kopi lover</h2>
+              <p class="muted small" id="profileHome">Brunei Darussalam</p>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="profileName">Passport name</label>
+            <input id="profileName" type="text" maxlength="24" placeholder="Your name or nickname" autocomplete="nickname">
+          </div>
+          <div class="field">
+            <label for="profileDistrict">Home district</label>
+            <select id="profileDistrict">
+              <option value="">Not set</option>
+              <option>Brunei-Muara</option>
+              <option>Tutong</option>
+              <option>Belait</option>
+              <option>Temburong</option>
+            </select>
+          </div>
+          <button id="saveProfile" class="btn btn-primary btn-block">Save profile</button>
+        </article>
+
+        <div class="stat-grid">
+          <div class="stat-card"><strong id="profileCafes">0</strong><span>Cafes visited</span></div>
+          <div class="stat-card"><strong id="profileStamps">0</strong><span>Total stamps</span></div>
+          <div class="stat-card"><strong id="profileDistricts">0</strong><span>Districts</span></div>
+          <div class="stat-card"><strong id="profileShots">0</strong><span>Shots dialed</span></div>
+          <div class="stat-card"><strong id="profileFavourites">0</strong><span>Favourites</span></div>
+          <div class="stat-card"><strong id="profilePhotos">0</strong><span>Photo proofs</span></div>
+        </div>
+
+        <div class="section-head">
+          <h2>Badges</h2>
+          <span class="pill" id="profileBadgeCount">0 / 0</span>
+        </div>
+        <div class="badge-grid" id="profileBadges"></div>
+
+        <article class="card">
+          <div class="card-head">
+            <h2>Your data</h2>
+            <span class="pill pill--quiet">On device</span>
+          </div>
+          <p class="muted small">Everything is stored locally in your browser. No account, no tracking. Export a backup before clearing browser data.</p>
+          <div class="btn-row">
+            <button id="exportData" class="btn btn-ghost">
+              <svg class="icon icon-sm" aria-hidden="true"><use href="#i-download"></use></svg>
+              Export
+            </button>
+            <button id="importData" class="btn btn-ghost">
+              <svg class="icon icon-sm" aria-hidden="true"><use href="#i-upload"></use></svg>
+              Import
+            </button>
+          </div>
+          <input type="file" id="importFile" accept="application/json,.json" hidden>
+          <button id="installApp" class="btn btn-primary btn-block" hidden>
+            <svg class="icon icon-sm" aria-hidden="true"><use href="#i-download"></use></svg>
+            Install Bah_ngupi
+          </button>
+          <button id="resetData" class="btn btn-danger-ghost btn-block">Reset passport</button>
+        </article>
+
+        <p class="version">Bah_ngupi v1.0 · Made for Brunei coffee lovers</p>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Primary">
+      <button class="nav-btn is-active" data-nav="passport" aria-current="page">
+        <svg class="icon" aria-hidden="true"><use href="#i-passport"></use></svg>
+        <span>Passport</span>
+      </button>
+      <button class="nav-btn" data-nav="explore">
+        <svg class="icon" aria-hidden="true"><use href="#i-compass"></use></svg>
+        <span>Explore</span>
+      </button>
+      <button class="nav-btn" data-nav="dialer">
+        <svg class="icon" aria-hidden="true"><use href="#i-timer"></use></svg>
+        <span>Dialer</span>
+      </button>
+      <button class="nav-btn" data-nav="profile">
+        <svg class="icon" aria-hidden="true"><use href="#i-user"></use></svg>
+        <span>Profile</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Bottom sheet -->
+  <div class="sheet" id="sheet" aria-hidden="true">
+    <div class="sheet-backdrop" data-close-sheet></div>
+    <div class="sheet-panel" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+      <div class="sheet-head">
+        <div class="sheet-grab" aria-hidden="true"></div>
+        <div class="sheet-titles">
+          <p class="eyebrow" id="sheetEyebrow" hidden></p>
+          <h2 id="sheetTitle">Details</h2>
+        </div>
+        <button class="sheet-close" data-close-sheet aria-label="Close panel">
+          <svg class="icon" aria-hidden="true"><use href="#i-close"></use></svg>
+        </button>
+      </div>
+      <div class="sheet-body" id="sheetBody"></div>
     </div>
+  </div>
 
-    <div class="history">
-        <h3>Recent Shots</h3>
-        <div id="history-list"></div>
+  <!-- Stamp reveal -->
+  <div class="modal" id="stampModal" aria-hidden="true">
+    <div class="modal-backdrop" data-close-modal></div>
+    <div class="modal-card stamp-reveal" role="dialog" aria-modal="true" aria-labelledby="stampModalTitle">
+      <p class="eyebrow"><svg class="icon icon-sm" aria-hidden="true"><use href="#i-spark"></use></svg> Stamp collected</p>
+      <h2 id="stampModalTitle">New stamp!</h2>
+      <div class="stamp-reveal-art" id="stampModalArt"></div>
+      <p class="stamp-reveal-meta" id="stampModalMeta"></p>
+      <div class="stamp-reveal-badges" id="stampModalBadges"></div>
+      <button class="btn btn-primary btn-block" data-close-modal>Keep hopping</button>
     </div>
+  </div>
 
-    <script>
-        // Local Brunei & Malaysia Coffee Bean Database
-        const coffeeBeans = [
-            // Brunei
-            { roaster: "Roasted Sip", name: "House Espresso", origin: "Blend", region: "Brunei", process: "Washed", notes: "Chocolate, nutty, smooth" },
-            { roaster: "Roasted Sip", name: "Single Origin", origin: "Ethiopia", region: "Yirgacheffe", process: "Washed", notes: "Floral, citrus, bright" },
-            { roaster: "Roasted Sip", name: "Dark Roast", origin: "Blend", region: "Brunei", process: "Natural", notes: "Dark chocolate, bold, smoky" },
-            
-            // Malaysia
-            { roaster: "MJU", name: "MJU Signature Blend", origin: "Blend", region: "Malaysia", process: "Washed", notes: "Caramel, balanced, sweet" },
-            { roaster: "MJU", name: "MJU Single Origin", origin: "Sumatra", region: "Mandheling", process: "Wet-hulled", notes: "Earthy, spicy, full body" },
-            { roaster: "Sol", name: "Sol House Blend", origin: "Blend", region: "Malaysia", process: "Washed", notes: "Chocolate, citrus, clean" },
-            { roaster: "Sol", name: "Sol Light Roast", origin: "Kenya", region: "Nyeri", process: "Washed", notes: "Berry, wine-like, bright" },
-            { roaster: "103 Coffee", name: "103 House Blend", origin: "Blend", region: "Malaysia", process: "Washed", notes: "Nutty, chocolate, smooth" },
-            { roaster: "PULP Coffee", name: "PULP Espresso", origin: "Blend", region: "Malaysia", process: "Washed", notes: "Fruity, sweet, complex" }
-        ];
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <span class="toast-icon" aria-hidden="true"></span>
+    <span class="toast-msg"></span>
+  </div>
 
-        let selectedBean = null;
-        let startTime = 0, elapsed = 0, timerInterval = null, finalTime = "00:00.0";
+  <noscript>
+    <div class="noscript">Bah_ngupi needs JavaScript to stamp your passport and run the espresso timer.</div>
+  </noscript>
 
-        function formatTime(ms) {
-            let totalSec = Math.floor(ms / 1000);
-            let min = Math.floor(totalSec / 60);
-            let sec = totalSec % 60;
-            let tenths = Math.floor((ms % 1000) / 100);
-            return `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}.${tenths}`;
-        }
-
-        function startTimer() {
-            if (!timerInterval) {
-                startTime = Date.now() - elapsed;
-                timerInterval = setInterval(() => {
-                    elapsed = Date.now() - startTime;
-                    document.getElementById('timer').textContent = formatTime(elapsed);
-                }, 50);
-            }
-        }
-
-        function stopTimer() { clearInterval(timerInterval); timerInterval = null; finalTime = document.getElementById('timer').textContent; }
-        function resetTimer() { clearInterval(timerInterval); timerInterval = null; elapsed = 0; finalTime = "00:00.0"; document.getElementById('timer').textContent = finalTime; }
-
-        function searchBeans() {
-            const query = document.getElementById('beanSearch').value.toLowerCase();
-            const resultsDiv = document.getElementById('beanResults');
-            if (query.length < 2) { resultsDiv.innerHTML = ''; return; }
-
-            const results = coffeeBeans.filter(bean => 
-                bean.roaster.toLowerCase().includes(query) ||
-                bean.name.toLowerCase().includes(query) ||
-                bean.origin.toLowerCase().includes(query)
-            );
-
-            if (results.length === 0) { resultsDiv.innerHTML = '<div class="empty-state">No beans found</div>'; return; }
-
-            resultsDiv.innerHTML = results.map((bean, index) => `
-                <div class="bean-result-item" onclick="selectBean(${coffeeBeans.indexOf(bean)})">
-                    <div class="bean-roaster">${bean.roaster} - ${bean.name}</div>
-                    <div class="bean-details">${bean.origin} • ${bean.process}</div>
-                    <div class="bean-details">🍯 ${bean.notes}</div>
-                </div>
-            `).join('');
-        }
-
-        function selectBean(index) {
-            selectedBean = coffeeBeans[index];
-            const displayDiv = document.getElementById('selectedBeanDisplay');
-            displayDiv.style.display = 'block';
-            displayDiv.innerHTML = `
-                <div class="selected-bean-display">
-                    <div style="font-weight: 600; margin-bottom: 4px;">${selectedBean.roaster} - ${selectedBean.name}</div>
-                    <div style="font-size: 0.85rem; color: var(--text-secondary);">
-                        ${selectedBean.origin} • ${selectedBean.process}<br>
-                        Notes: ${selectedBean.notes}
-                    </div>
-                    <button class="clear-btn" onclick="clearBeanSelection()">Clear</button>
-                </div>
-            `;
-            document.getElementById('beanSearch').value = '';
-            document.getElementById('beanResults').innerHTML = '';
-        }
-
-        function clearBeanSelection() {
-            selectedBean = null;
-            document.getElementById('selectedBeanDisplay').style.display = 'none';
-            document.getElementById('beanSearch').value = '';
-        }
-
-        function saveShot() {
-            const shot = {
-                date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-                time: finalTime,
-                bean: selectedBean ? `${selectedBean.roaster} - ${selectedBean.name}` : 'Unknown',
-                dose: document.getElementById('dose').value || '-',
-                yield: document.getElementById('yield').value || '-',
-                grind: document.getElementById('grind').value || '-',
-                notes: document.getElementById('notes').value
-            };
-            let history = JSON.parse(localStorage.getItem('espresso_history') || '[]');
-            history.unshift(shot); 
-            localStorage.setItem('espresso_history', JSON.stringify(history));
-            renderHistory();
-            ['dose', 'yield', 'grind', 'notes'].forEach(id => document.getElementById(id).value = '');
-            clearBeanSelection();
-            resetTimer();
-        }
-
-        function renderHistory() {
-            const history = JSON.parse(localStorage.getItem('espresso_history') || '[]');
-            const list = document.getElementById('history-list');
-            if (history.length === 0) { list.innerHTML = '<div class="empty-state">No shots logged yet. Brew something!</div>'; return; }
-            list.innerHTML = history.map(s => `
-                <div class="shot-card">
-                    <div class="date">${s.date}</div>
-                    ${s.bean !== 'Unknown' ? `<div class="bean-info">☕ ${s.bean}</div>` : ''}
-                    <div class="stats"><span>⏱️ ${s.time}</span><span>⚖️ ${s.dose}g → ${s.yield}g</span></div>
-                    <div class="stats"><span>⚙️ ${s.grind}</span></div>
-                    ${s.notes ? `<div class="notes">"${s.notes}"</div>` : ''}
-                </div>
-            `).join('');
-        }
-        renderHistory();
-    </script>
+  <script src="js/utils.js" defer></script>
+  <script src="js/cafes.js" defer></script>
+  <script src="js/passport.js" defer></script>
+  <script src="js/dialer.js" defer></script>
+  <script src="js/app.js" defer></script>
 </body>
 </html>
