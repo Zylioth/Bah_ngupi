@@ -89,7 +89,8 @@
       price: "$$",
       menu: ["House Espresso", "Ethiopia Guji Filter", "Flat White", "Cold Brew"],
       color: "#a06f8a",
-      color2: "#42283a"
+      color2: "#42283a",
+      logo: "assets/logos/roasted-sip.png"
     },
     {
       id: "monochrome-gadong",
@@ -281,7 +282,8 @@
       price: "$",
       menu: ["Spanish Latte", "Butter Creme Latte", "CEO Latte", "Cold Brew"],
       color: "#002d62",
-      color2: "#001b3d"
+      color2: "#001b3d",
+      logo: "assets/logos/zus-coffee.png"
     },
     {
       id: "mile-coffee-gadong",

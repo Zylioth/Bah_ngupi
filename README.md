@@ -94,7 +94,8 @@ bah-ngupi/
 │   └── app.js               Store, router, profile, import/export, PWA
 ├── assets/
 │   ├── fonts/               Self-hosted Fraunces, Manrope, JetBrains Mono (OFL)
-│   └── icons/               Generated PNG icons + SVG favicon
+│   ├── icons/               Generated PNG icons + SVG favicon
+│   └── logos/               Optional brand logos, 128px PNG, one per brand slug
 └── tools/
     ├── generate-icons.js    Dependency-free PNG icon generator
     └── import-cafes.mjs     Regenerates js/cafes-directory.js from the public directory
@@ -188,6 +189,14 @@ The generated part of the directory is derived from **bruneicoffeeplaces.com**, 
 Listings intentionally use light detail because hours, menus and addresses change. Users can edit their own additions; seed entries can be supplemented via the "Add a cafe" flow.
 
 No affiliation with any cafe or brand is implied.
+
+### Brand logos
+
+Logos are opt-in and never fetched at runtime. Drop a 128px transparent PNG at `assets/logos/<brand-slug>.png` (the brand name lowercased, spaces to hyphens — `zus-coffee.png`, `roasted-sip.png`) and rerun `node tools/import-cafes.mjs`; every branch of that brand picks it up. Hand-written entries set the same field inline in `js/cafes.js`.
+
+Only two brands ship with a logo, because that is all that could be sourced cleanly: ZUS Coffee and Roasted Sip both publish a usable mark. Everything else keeps the generated monogram, and because both treatments sit on the same cream plate the mix reads as intentional rather than broken.
+
+Logos render on a `--paper` plate deliberately: most brand marks are drawn for white backgrounds and disappear against the dark shell. Trademarks belong to their owners; logos are used here only to identify the business, not to imply endorsement.
 
 ---
 

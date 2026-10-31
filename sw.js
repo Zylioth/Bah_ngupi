@@ -5,7 +5,7 @@
    ============================================================ */
 "use strict";
 
-const VERSION = "2.1.2";
+const VERSION = "2.1.3";
 const CACHE = "bah-ngupi-v" + VERSION;
 
 const PRECACHE = [
@@ -20,6 +20,8 @@ const PRECACHE = [
   "./js/dialer.js",
   "./js/app.js",
   "./assets/fonts/fraunces-latin.woff2",
+  "./assets/logos/roasted-sip.png",
+  "./assets/logos/zus-coffee.png",
   "./assets/fonts/manrope-latin.woff2",
   "./assets/fonts/jetbrains-mono-latin.woff2",
   "./assets/icons/icon.svg",

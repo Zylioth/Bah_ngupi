@@ -501,6 +501,24 @@
     const colors = colorOf(cafe);
     const tags = (cafe.tags || []).slice(0, 2);
     const visited = visits.length > 0;
+    const dot = visited ? '<span class="cafe-mono-dot" aria-hidden="true"></span>' : "";
+    /* A real brand logo sits on a cream plate; without one the generated
+       monogram keeps the card readable and consistent. */
+    const mark = cafe.logo
+      ? '<span class="cafe-mono is-logo">' +
+        '<img class="cafe-logo" src="' +
+        U.escapeHtml(cafe.logo) +
+        '" alt="" width="128" height="128" loading="lazy" decoding="async">' +
+        dot +
+        "</span>"
+      : '<span class="cafe-mono" style="background:linear-gradient(135deg,' +
+        colors.color +
+        "," +
+        colors.color2 +
+        ')">' +
+        U.escapeHtml(U.initials(cafe.name)) +
+        dot +
+        "</span>";
     return (
       '<article class="cafe-card' +
       (visited ? " is-visited" : "") +
@@ -508,14 +526,7 @@
       '<button class="cafe-open" data-action="open-cafe" data-cafe-id="' +
       U.escapeHtml(cafe.id) +
       '">' +
-      '<span class="cafe-mono" style="background:linear-gradient(135deg,' +
-      colors.color +
-      "," +
-      colors.color2 +
-      ')">' +
-      U.escapeHtml(U.initials(cafe.name)) +
-      (visited ? '<span class="cafe-mono-dot" aria-hidden="true"></span>' : "") +
-      "</span>" +
+      mark +
       '<span class="cafe-body">' +
       '<span class="cafe-title-row"><strong>' +
       U.escapeHtml(cafe.name) +
@@ -664,9 +675,13 @@
       '<div class="detail-cover" style="' +
       coverStyle(cafe) +
       '">' +
-      '<span class="detail-cover-mono">' +
-      U.escapeHtml(U.initials(cafe.name)) +
-      "</span>" +
+      (cafe.logo
+        ? '<span class="detail-cover-mono is-logo"><img src="' +
+          U.escapeHtml(cafe.logo) +
+          '" alt=""></span>'
+        : '<span class="detail-cover-mono">' +
+          U.escapeHtml(U.initials(cafe.name)) +
+          "</span>") +
       '<div class="detail-cover-badges">' +
       '<span class="tag">' +
       U.escapeHtml(cafe.category) +

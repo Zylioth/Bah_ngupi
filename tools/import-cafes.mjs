@@ -24,7 +24,7 @@
    NEVER run this at runtime — the app must stay offline-first.
    ============================================================ */
 
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -36,6 +36,21 @@ const ANON_KEY =
 
 const OUT_FILE = join(ROOT, "js", "cafes-directory.js");
 const SEED_FILE = join(ROOT, "js", "cafes.js");
+const LOGO_DIR = join(ROOT, "assets", "logos");
+
+/* Brand logos are opt-in by filename: drop assets/logos/zus-coffee.png in
+   and every ZUS branch picks it up on the next run. Brands with no file
+   keep the generated monogram, which is why the directory ships with only
+   the handful of logos that could be sourced cleanly. */
+const LOGO_FILES = new Set(
+  (() => {
+    try {
+      return readdirSync(LOGO_DIR).filter((name) => /\.(png|webp|jpe?g)$/i.test(name));
+    } catch {
+      return [];
+    }
+  })()
+);
 
 const DISTRICTS = ["Brunei-Muara", "Tutong", "Belait", "Temburong"];
 
@@ -127,6 +142,11 @@ function paletteFor(seed) {
 }
 
 const clean = (value, max) => String(value || "").replace(/\s+/g, " ").trim().slice(0, max || 240);
+
+const logoFor = (name) => {
+  const file = slug(name) + ".png";
+  return LOGO_FILES.has(file) ? "assets/logos/" + file : "";
+};
 
 async function table(name, query) {
   const url = SUPABASE_URL + "/rest/v1/" + name + (query ? "?" + query : "");
@@ -357,6 +377,11 @@ async function main() {
         instagram: instagramByCompany.get(company.id) || "",
         directoryNote: noteIsUseful ? rawNote : ""
       };
+
+      /* Only carry the key when a logo actually exists, so the generated
+         file stays a clean list of what the app can actually show. */
+      const logo = logoFor(name);
+      if (logo) record.logo = logo;
 
       /* The directory occasionally holds one shop twice — same brand, same
          neighbourhood, same Instagram, entered as two companies. Keep the
