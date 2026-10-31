@@ -16,15 +16,19 @@
      1. Pulls cafe_companies + cafe_branches + cafe_socials.
      2. Drops branches marked closed, and branches whose maintainer
         note says the place closed or is on hiatus.
-     3. Skips brands already hand-curated in js/cafes.js, so the rich
-        copy there always wins.
+     3. Drops the duplicate company records the directory occasionally
+        holds for one physical shop.
      4. Maps every remaining branch onto this app's cafe shape and
         writes the result as window.BN.CAFE_DIRECTORY.
+
+   Whatever the directory lists is exactly what the app shows. There is
+   no second, hand-written cafe list that could drift out of date or
+   invent places that do not exist.
 
    NEVER run this at runtime — the app must stay offline-first.
    ============================================================ */
 
-import { readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { readdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -35,7 +39,6 @@ const ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzbWhwcGp1ZGxmaWV5YmNva2h2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzODk1MTksImV4cCI6MjA4NTk2NTUxOX0.r88zesNNXH-ntuv-DEuBoUr3QVwy1u1u-hzJEQLuRjE";
 
 const OUT_FILE = join(ROOT, "js", "cafes-directory.js");
-const SEED_FILE = join(ROOT, "js", "cafes.js");
 const LOGO_DIR = join(ROOT, "assets", "logos");
 
 /* Brand logos are opt-in by filename: drop assets/logos/zus-coffee.png in
@@ -159,45 +162,6 @@ async function table(name, query) {
   return response.json();
 }
 
-/* Hand-curated entries in js/cafes.js win over directory rows — but only
-   for the neighbourhood they describe. A chain's other branches still
-   come from the directory, so ZUS keeps all eight. */
-function curatedNames() {
-  const source = readFileSync(SEED_FILE, "utf8");
-  const found = [];
-  const pattern = /name:\s*"([^"]+)",\s*\n\s*area:\s*"([^"]+)"/g;
-  for (const match of source.matchAll(pattern)) {
-    found.push({
-      name: match[1],
-      area: match[2],
-      norm: norm(match[1]),
-      core: core(match[1]),
-      areaKey: norm(match[2])
-    });
-  }
-  return found;
-}
-
-/* Two names are the same shop when their cores match exactly. Names the
-   two sources genuinely spell differently go here by hand — a guess
-   wide enough to catch the rest also swallows real cafes ("Salt
-   Coffee" is not "Salt:ed", "Beanery & Co." is not "Coffee Bean"). */
-const CURATED_ALIASES = new Map([
-  ["thecoffeebeantealeaf", "coffeebean"], // the directory drops the "& Tea Leaf"
-  ["theslicebyia", "theslice"]
-]);
-
-function sameShop(name, curatedEntries) {
-  const n = norm(name);
-  const c = core(name);
-  for (const entry of curatedEntries) {
-    if (entry.norm === n) return entry;
-    if (entry.core === c) return entry;
-    if (CURATED_ALIASES.get(entry.norm) === n) return entry;
-  }
-  return null;
-}
-
 function buildDistrictLookup(branches) {
   const votes = new Map();
   for (const branch of branches) {
@@ -235,8 +199,6 @@ async function main() {
   }
 
   const districtLookup = buildDistrictLookup(branches);
-  const curated = curatedNames();
-  const matchedCurated = new Set();
 
   const records = [];
   const usedIds = new Set();
@@ -246,8 +208,6 @@ async function main() {
     branches: branches.length,
     closedBranches: 0,
     closureNotes: 0,
-    curatedSkipped: [],
-    curatedOwned: 0,
     unknownBrand: 0,
     noLocation: 0,
     districtInferred: 0,
@@ -268,7 +228,6 @@ async function main() {
       stats.unknownBrand += 1;
       continue;
     }
-    const clash = sameShop(name, curated);
 
     const companyBranches = (byCompany.get(company.id) || []).filter((branch) => {
       if (branch.is_closed) {
@@ -284,21 +243,6 @@ async function main() {
 
     const seenPlaces = new Set();
 
-    /* Which branch does the hand-curated entry already cover? Prefer the
-       one in the same neighbourhood; otherwise the only branch, or the
-       first by name so the result is at least stable between runs. The
-       sources word areas differently ("Rimba" vs "Bandar Seri Begawan"),
-       so an exact match often cannot be made. */
-    let ownedPlace = null;
-    if (clash) {
-      const places = companyBranches
-        .map((branch) => ({ place: norm(branch.location), location: branch.location }))
-        .filter((entry) => entry.place);
-      const exact = places.find((entry) => entry.place === clash.areaKey);
-      const chosen = exact || places.sort((a, b) => String(a.location).localeCompare(String(b.location)))[0];
-      if (chosen) ownedPlace = chosen.place;
-    }
-
     for (const branch of companyBranches) {
       const location = clean(branch.location, 40);
       if (!location) {
@@ -312,14 +256,6 @@ async function main() {
         continue;
       }
       seenPlaces.add(place);
-
-      /* This branch is the one the hand-curated entry already describes. */
-      if (ownedPlace && place === ownedPlace) {
-        stats.curatedOwned += 1;
-        matchedCurated.add(clash.name);
-        stats.curatedSkipped.push(name + " @ " + location + "  ←→  " + clash.name + " (" + clash.area + ")");
-        continue;
-      }
 
       let district = DISTRICTS.includes(branch.district) ? branch.district : "";
       if (!district) {
@@ -422,8 +358,8 @@ async function main() {
    ${new Date().toISOString().slice(0, 10)}.
 
    These are directory rows, not hand-written copy: hours, price and
-   menu are intentionally blank rather than invented. Cafes already
-   curated in js/cafes.js are excluded here so the richer copy wins.
+   menu are intentionally blank rather than invented. This file is the
+   app's only source of cafes — there is no hand-written cafe list.
    ============================================================ */
 (function () {
   "use strict";
@@ -446,8 +382,6 @@ ${body}
   console.log("Wrote " + OUT_FILE);
   console.log("  entries            :", records.length);
   console.log("  by district        :", JSON.stringify(districts));
-  console.log("  skipped (curated)  :", stats.curatedSkipped.length);
-  for (const line of stats.curatedSkipped) console.log("      ", line);
   console.log("  dropped is_closed  :", stats.closedBranches);
   console.log("  dropped by note    :", stats.closureNotes);
   console.log("  unknown brand      :", stats.unknownBrand);
@@ -458,13 +392,6 @@ ${body}
   console.log("  district unknown   :", stats.districtUnknown);
   console.log("  with instagram     :", records.filter((record) => record.instagram).length);
   console.log("  bytes              :", Buffer.byteLength(output, "utf8"));
-
-  /* Curated shops the directory does not list at all. Not proof they
-     closed — the directory may simply use another name — but worth a
-     human look, so they are printed rather than silently trusted. */
-  const unmatched = curated.filter((entry) => !matchedCurated.has(entry.name));
-  console.log("\n  curated entries the directory does not confirm (" + unmatched.length + "):");
-  for (const entry of unmatched) console.log("      ", entry.name);
 }
 
 main().catch((error) => {
