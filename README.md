@@ -18,7 +18,7 @@ Check in at local cafes, add a photo of your cup, collect a custom digital stamp
 - Duplicate visits are allowed — every visit earns its own dated stamp
 
 ### Cafe directory
-- 348 starter cafes across Brunei-Muara, Tutong, Belait and Temburong: 37 hand-written entries plus a generated directory of 311 branches
+- 347 starter cafes across Brunei-Muara, Tutong, Belait and Temburong: 37 hand-written entries plus a generated directory of 310 branches (301 brands)
 - Search by cafe, area, vibe, menu or district, with a sticky search/filter bar
 - District chips (Brunei-Muara, Tutong, Belait, Temburong) with cafe counts + favourites filter
 - Dense scan-friendly rows with monogram, category, tags and stamp tally
@@ -116,7 +116,7 @@ All state is stored in `localStorage` under versioned keys:
 | `bn_profile_v1` | Passport name, home district, join date |
 | `espresso_history` | Espresso recipes (kept compatible with the original dialer) |
 
-The starter cafe list is `js/cafes.js` (37 hand-written entries) concatenated with `js/cafes-directory.js` (311 generated branches), then merged with custom cafes at runtime. The directory is produced by `node tools/import-cafes.mjs`; hand-curated entries always win over the directory row for the same shop and neighbourhood, so edit `js/cafes.js` when you want to write real copy and never edit the generated file.
+The starter cafe list is `js/cafes.js` (37 hand-written entries) concatenated with `js/cafes-directory.js` (310 generated branches), then merged with custom cafes at runtime. Counts are per **location**, not per brand — 347 listings cover 301 brands, because chains list every branch separately (ZUS has 8, Coffee Bean 8, Roasted Sip 6). The directory is produced by `node tools/import-cafes.mjs`; hand-curated entries always win over the directory row for the same shop and neighbourhood, so edit `js/cafes.js` when you want to write real copy and never edit the generated file.
 
 ### Backup format
 

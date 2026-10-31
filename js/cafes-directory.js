@@ -3,7 +3,7 @@
    ------------------------------------------------------------
    DO NOT EDIT BY HAND. Regenerate with:  node tools/import-cafes.mjs
    Source: https://bruneicoffeeplaces.com (community-maintained
-   Brunei coffee directory). 311 entries, generated
+   Brunei coffee directory). 310 entries, generated
    2026-10-31.
 
    These are directory rows, not hand-written copy: hours, price and
@@ -72,8 +72,7 @@
     {"id":"coffee-by-7t1-kiarong","name":"Coffee by 7t1","area":"Kiarong","district":"Brunei-Muara","category":"Cafe","tags":["Dine-in"],"description":"Cafe in Kiarong, Brunei-Muara. Dine-in.","address":"Kiarong, Brunei-Muara","hours":"","price":"$$","menu":[],"color":"#b8694a","color2":"#4d261b","instagram":"coffeeby7t1.bn","directoryNote":""},
     {"id":"coffee-by-pai-rimba","name":"Coffee by Pai","area":"Rimba","district":"Brunei-Muara","category":"Cafe","tags":["Dine-in"],"description":"Cafe in Rimba, Brunei-Muara. Dine-in.","address":"Rimba, Brunei-Muara","hours":"","price":"$$","menu":[],"color":"#b8694a","color2":"#4d261b","instagram":"coffeebypai","directoryNote":""},
     {"id":"coffee-field-batu-bersurat","name":"Coffee Field","area":"Batu Bersurat","district":"Brunei-Muara","category":"Cafe","tags":["Full meals","Dine-in"],"description":"Cafe in Batu Bersurat, Brunei-Muara. Full meals, Dine-in.","address":"Batu Bersurat, Brunei-Muara","hours":"","price":"$$","menu":[],"color":"#6f8f96","color2":"#283c40","instagram":"coffeefieldcafe.bn","directoryNote":""},
-    {"id":"coffee-loft-kiulap","name":"Coffee Loft","area":"Kiulap","district":"Brunei-Muara","category":"Cafe","tags":["Full meals"],"description":"Cafe in Kiulap, Brunei-Muara. Full meals.","address":"Kiulap, Brunei-Muara","hours":"","price":"$$","menu":[],"color":"#9e7b55","color2":"#3e2d21","instagram":"coffeeloft.bn","directoryNote":""},
-    {"id":"coffee-loft-kiulap-2","name":"Coffee Loft","area":"Kiulap","district":"Brunei-Muara","category":"Cafe","tags":[],"description":"Cafe in Kiulap, Brunei-Muara.","address":"Kiulap, Brunei-Muara","hours":"","price":"$$","menu":[],"color":"#9e7b55","color2":"#3e2d21","instagram":"coffeeloft.bn","directoryNote":"Inside Jungle Gym, Seri Anigma, Kiulap. Tue-Sun 12-9pm"},
+    {"id":"coffee-loft-kiulap","name":"Coffee Loft","area":"Kiulap","district":"Brunei-Muara","category":"Cafe","tags":["Full meals"],"description":"Cafe in Kiulap, Brunei-Muara. Full meals.","address":"Kiulap, Brunei-Muara","hours":"","price":"$$","menu":[],"color":"#9e7b55","color2":"#3e2d21","instagram":"coffeeloft.bn","directoryNote":"Inside Jungle Gym, Seri Anigma, Kiulap. Tue-Sun 12-9pm"},
     {"id":"coffee-up-berakas","name":"Coffee Up","area":"Berakas","district":"Brunei-Muara","category":"Cafe","tags":["Dine-in"],"description":"Cafe in Berakas, Brunei-Muara. Dine-in.","address":"Berakas, Brunei-Muara","hours":"","price":"$$","menu":[],"color":"#a9853f","color2":"#4a3518","instagram":"coffeeup.bwn","directoryNote":"(2) At UBD Botanical Garden only"},
     {"id":"coffpecker-lambak","name":"Coffpecker","area":"Lambak","district":"Brunei-Muara","category":"Cafe","tags":["Dine-in"],"description":"Cafe in Lambak, Brunei-Muara. Dine-in.","address":"Lambak, Brunei-Muara","hours":"","price":"$$","menu":[],"color":"#b8694a","color2":"#4d261b","instagram":"coffpecker_cafe","directoryNote":""},
     {"id":"compound-by-sift-menglait","name":"Compound by Sift","area":"Menglait","district":"Brunei-Muara","category":"Cafe","tags":["Newly added"],"description":"Cafe in Menglait, Brunei-Muara.","address":"Menglait, Brunei-Muara","hours":"","price":"$$","menu":[],"color":"#9e7b55","color2":"#3e2d21","instagram":"compound.bysift","directoryNote":""},

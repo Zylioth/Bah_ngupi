@@ -220,6 +220,7 @@ async function main() {
 
   const records = [];
   const usedIds = new Set();
+  const placed = new Map();
   const stats = {
     companies: companies.length,
     branches: branches.length,
@@ -231,7 +232,8 @@ async function main() {
     noLocation: 0,
     districtInferred: 0,
     districtUnknown: 0,
-    duplicates: 0
+    duplicates: 0,
+    brandDuplicates: 0
   };
 
   const ordered = [...companies].sort(
@@ -338,7 +340,7 @@ async function main() {
       usedIds.add(id);
 
       const colors = paletteFor(name + location);
-      records.push({
+      const record = {
         id,
         name,
         area: location,
@@ -354,7 +356,26 @@ async function main() {
         color2: colors[1],
         instagram: instagramByCompany.get(company.id) || "",
         directoryNote: noteIsUseful ? rawNote : ""
-      });
+      };
+
+      /* The directory occasionally holds one shop twice — same brand, same
+         neighbourhood, same Instagram, entered as two companies. Keep the
+         first row and let the later one donate anything more specific. */
+      const placeKey = norm(name) + "@" + place;
+      const previous = placed.get(placeKey);
+      if (previous) {
+        stats.brandDuplicates += 1;
+        if (record.address.length > previous.address.length) previous.address = record.address;
+        if (!previous.directoryNote && record.directoryNote) previous.directoryNote = record.directoryNote;
+        if (!previous.instagram && record.instagram) previous.instagram = record.instagram;
+        for (const tag of record.tags) {
+          if (!previous.tags.includes(tag)) previous.tags.push(tag);
+        }
+        usedIds.delete(id);
+        continue;
+      }
+      placed.set(placeKey, record);
+      records.push(record);
     }
   }
 
@@ -407,6 +428,7 @@ ${body}
   console.log("  unknown brand      :", stats.unknownBrand);
   console.log("  no location        :", stats.noLocation);
   console.log("  duplicate place    :", stats.duplicates);
+  console.log("  same shop, twice   :", stats.brandDuplicates);
   console.log("  district inferred  :", stats.districtInferred);
   console.log("  district unknown   :", stats.districtUnknown);
   console.log("  with instagram     :", records.filter((record) => record.instagram).length);

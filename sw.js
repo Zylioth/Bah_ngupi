@@ -5,7 +5,7 @@
    ============================================================ */
 "use strict";
 
-const VERSION = "2.1.1";
+const VERSION = "2.1.2";
 const CACHE = "bah-ngupi-v" + VERSION;
 
 const PRECACHE = [
