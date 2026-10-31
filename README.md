@@ -18,7 +18,7 @@ Check in at local cafes, add a photo of your cup, collect a custom digital stamp
 - Duplicate visits are allowed — every visit earns its own dated stamp
 
 ### Cafe directory
-- 37 starter cafes across Brunei-Muara, Tutong, Belait and Temburong, curated from public Brunei coffee guides
+- 348 starter cafes across Brunei-Muara, Tutong, Belait and Temburong: 37 hand-written entries plus a generated directory of 311 branches
 - Search by cafe, area, vibe, menu or district, with a sticky search/filter bar
 - Area chips with cafe counts + favourites filter
 - Dense scan-friendly rows with monogram, category, tags and stamp tally
@@ -87,7 +87,8 @@ bah-ngupi/
 │   └── style.css            Editorial coffee-passport design system, mobile-first layout
 ├── js/
 │   ├── utils.js             Escaping, storage, image compression, sheet/toast UI
-│   ├── cafes.js             Starter Brunei cafe + coffee bean databases
+│   ├── cafes-directory.js   Generated cafe directory (do not edit by hand)
+│   ├── cafes.js             Hand-curated Brunei cafes + coffee bean database
 │   ├── passport.js          Directory, check-ins, stamps, achievements
 │   ├── dialer.js            Shot timer, bean picker, recipe log
 │   └── app.js               Store, router, profile, import/export, PWA
@@ -95,7 +96,8 @@ bah-ngupi/
 │   ├── fonts/               Self-hosted Fraunces, Manrope, JetBrains Mono (OFL)
 │   └── icons/               Generated PNG icons + SVG favicon
 └── tools/
-    └── generate-icons.js    Dependency-free PNG icon generator
+    ├── generate-icons.js    Dependency-free PNG icon generator
+    └── import-cafes.mjs     Regenerates js/cafes-directory.js from the public directory
 ```
 
 Scripts are classic `<script defer>` files sharing the `window.BN` namespace. That keeps the app working from the filesystem and avoids module/CORS surprises.
@@ -114,7 +116,7 @@ All state is stored in `localStorage` under versioned keys:
 | `bn_profile_v1` | Passport name, home district, join date |
 | `espresso_history` | Espresso recipes (kept compatible with the original dialer) |
 
-The starter cafe list lives in `js/cafes.js` and is merged with custom cafes at runtime.
+The starter cafe list is `js/cafes.js` (37 hand-written entries) concatenated with `js/cafes-directory.js` (311 generated branches), then merged with custom cafes at runtime. The directory is produced by `node tools/import-cafes.mjs`; hand-curated entries always win over the directory row for the same shop and neighbourhood, so edit `js/cafes.js` when you want to write real copy and never edit the generated file.
 
 ### Backup format
 
@@ -179,7 +181,11 @@ The script renders the coffee-bean passport mark with anti-aliasing and writes:
 
 ## Starter directory credit
 
-Cafe names and areas are curated from public Brunei coffee resources, including the **Brunei Coffee Trail** (Brunei Tourism, 2025 edition) and the **Explore Brunei** cafe directory. Listings intentionally use light detail because hours, menus and addresses change. Users can edit their own additions; seed entries can be supplemented via the "Add a cafe" flow.
+Cafe names and areas are curated from public Brunei coffee resources, including the **Brunei Coffee Trail** (Brunei Tourism, 2025 edition) and the **Explore Brunei** cafe directory.
+
+The generated part of the directory is derived from **bruneicoffeeplaces.com**, a community-maintained Brunei coffee directory, via `tools/import-cafes.mjs`. Attribution belongs there: the list is their curation work, not ours. Entries the importer produces carry no invented detail — hours, price and menu stay blank rather than guessed — and branches marked closed in the source are dropped.
+
+Listings intentionally use light detail because hours, menus and addresses change. Users can edit their own additions; seed entries can be supplemented via the "Add a cafe" flow.
 
 No affiliation with any cafe or brand is implied.
 

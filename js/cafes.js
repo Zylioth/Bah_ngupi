@@ -1,7 +1,8 @@
 /* ============================================================
-   Bah_ngupi — comprehensive cafe directory & coffee bean database
-   Curated list of 40+ active, coffee-serving cafes & roasteries 
-   across Brunei Darussalam (Brunei-Muara, Tutong, Belait, Temburong).
+   Bah_ngupi — hand-curated cafe notes & coffee bean database
+   37 curated Brunei cafes, each with real copy (description, menu,
+   price, hours). Broader branch coverage comes from the generated
+   js/cafes-directory.js, not from this file.
    ============================================================ */
 (function () {
   "use strict";
@@ -625,6 +626,12 @@
     { roaster: "Beans & Berries", name: "Sabah Single Origin", origin: "Malaysia", region: "Sabah", process: "Honey", notes: "Palm sugar, mango, soft acidity" }
   ];
 
-  BN.SEED_CAFES = SEED_CAFES;
+  /* Hand-curated entries first, then the generated directory (see
+     js/cafes-directory.js and tools/import-cafes.mjs). The importer
+     already skips any directory row a curated entry describes, so this
+     concatenation never produces duplicates. */
+  const directory = Array.isArray(BN.CAFE_DIRECTORY) ? BN.CAFE_DIRECTORY : [];
+
+  BN.SEED_CAFES = SEED_CAFES.concat(directory);
   BN.COFFEE_BEANS = COFFEE_BEANS;
 })();
