@@ -1,0 +1,400 @@
+/* ============================================================
+   Bah_ngupi — cafe directory importer
+   ------------------------------------------------------------
+   Regenerates js/cafes-directory.js from the public Brunei Coffee
+   Places directory (https://bruneicoffeeplaces.com).
+
+   That site is a static React app reading a Supabase table through
+   its public anon key. The key below is the same one shipped in the
+   site's own browser bundle; it grants read-only access to public
+   rows, nothing more. Nothing secret is stored here.
+
+   Run with:  node tools/import-cafes.mjs
+   No dependencies, Node 18+ (uses global fetch).
+
+   What it does:
+     1. Pulls cafe_companies + cafe_branches + cafe_socials.
+     2. Drops branches marked closed, and branches whose maintainer
+        note says the place closed or is on hiatus.
+     3. Drops the duplicate company records the directory occasionally
+        holds for one physical shop.
+     4. Maps every remaining branch onto this app's cafe shape and
+        writes the result as window.BN.CAFE_DIRECTORY.
+
+   Whatever the directory lists is exactly what the app shows. There is
+   no second, hand-written cafe list that could drift out of date or
+   invent places that do not exist.
+
+   NEVER run this at runtime — the app must stay offline-first.
+   ============================================================ */
+
+import { readdirSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+
+const SUPABASE_URL = "https://ksmhppjudlfieybcokhv.supabase.co";
+const ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzbWhwcGp1ZGxmaWV5YmNva2h2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzODk1MTksImV4cCI6MjA4NTk2NTUxOX0.r88zesNNXH-ntuv-DEuBoUr3QVwy1u1u-hzJEQLuRjE";
+
+const OUT_FILE = join(ROOT, "js", "cafes-directory.js");
+const LOGO_DIR = join(ROOT, "assets", "logos");
+
+/* Brand logos are opt-in by filename: drop assets/logos/zus-coffee.png in
+   and every ZUS branch picks it up on the next run. Brands with no file
+   keep the generated monogram, which is why the directory ships with only
+   the handful of logos that could be sourced cleanly. */
+const LOGO_FILES = new Set(
+  (() => {
+    try {
+      return readdirSync(LOGO_DIR).filter((name) => /\.(png|webp|jpe?g)$/i.test(name));
+    } catch {
+      return [];
+    }
+  })()
+);
+
+const DISTRICTS = ["Brunei-Muara", "Tutong", "Belait", "Temburong"];
+
+const CATEGORY_BY_STORE_TYPE = {
+  "store-based": "Cafe",
+  "pick-up": "Pick-up",
+  "pop-up": "Pop-up",
+  "home-based": "Home-based"
+};
+
+/* Flag → tag. Only `true` becomes a tag; `false` and null mean
+   "not verified", never "no". */
+const TAGS_BY_FLAG = [
+  ["is_specialty_coffee", "Specialty coffee"],
+  ["is_specialty_matcha", "Matcha"],
+  ["has_full_meals", "Full meals"],
+  ["is_study_spot", "Study spot"],
+  ["opens_late", "Open late"],
+  ["closes_early", "Early bird"],
+  ["has_cats", "Cats"],
+  ["is_dine_in", "Dine-in"],
+  ["is_drinks_only_or_light_bites", "Drinks & light bites"],
+  ["is_newly_added", "Newly added"]
+];
+
+/* A branch the maintainer has marked closed in prose but not in the
+   is_closed column. */
+const CLOSURE_NOTE = /\b(closed|closing|shut|hiatus|ceased|no longer)\b/i;
+
+/* Notes that are really street addresses, not commentary. */
+const ADDRESS_NOTE =
+  /\b(unit|blok|block|floor|spg|simpang|jln|jalan|lot|no\.?\s*\d|bangunan|kompleks|shoplot)\b/i;
+
+/* Notes written for the directory's own maintainers ("excluded from
+   the reel", "Mr BCP say keep") — not fit to show in the app. */
+const INTERNAL_NOTE = /\b(reel|excluded|Mr BCP|keep|Remove|private account|Can't find IG)/i;
+
+const norm = (value) =>
+  String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
+
+/* Words that carry no brand identity. "Monochrome Coffee Co." and
+   "Monochrome Coffee" are the same shop; their cores both read
+   "monochrome". */
+const GENERIC_WORDS = new Set([
+  "the", "and", "co", "cafe", "coffee", "coffeeco", "roasters", "roaster",
+  "roastery", "brunei", "house", "micro", "bakery", "company"
+]);
+
+const core = (value) => {
+  const words = String(value || "")
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .filter(Boolean)
+    .filter((word) => !GENERIC_WORDS.has(word));
+  return words.join("") || norm(value);
+};
+
+const slug = (value) =>
+  String(value || "")
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 48) || "cafe";
+
+/* Same PALETTE + same hash as js/utils.js paletteFor(), so a generated
+   cafe gets exactly the colours the app would have picked for it. */
+const PALETTE = [
+  ["#c98a4b", "#5b3820"],
+  ["#9e7b55", "#3e2d21"],
+  ["#b8694a", "#4d261b"],
+  ["#8b9a72", "#35402b"],
+  ["#a9853f", "#4a3518"],
+  ["#a06f8a", "#42283a"],
+  ["#6f8f96", "#283c40"],
+  ["#c27b5c", "#4f2a1e"]
+];
+
+function paletteFor(seed) {
+  const text = String(seed || "bah-ngupi");
+  let hash = 0;
+  for (let i = 0; i < text.length; i += 1) {
+    hash = (hash * 31 + text.charCodeAt(i)) >>> 0;
+  }
+  return PALETTE[hash % PALETTE.length];
+}
+
+const clean = (value, max) => String(value || "").replace(/\s+/g, " ").trim().slice(0, max || 240);
+
+const logoFor = (name) => {
+  const file = slug(name) + ".png";
+  return LOGO_FILES.has(file) ? "assets/logos/" + file : "";
+};
+
+async function table(name, query) {
+  const url = SUPABASE_URL + "/rest/v1/" + name + (query ? "?" + query : "");
+  const response = await fetch(url, {
+    headers: { apikey: ANON_KEY, authorization: "Bearer " + ANON_KEY }
+  });
+  if (!response.ok) {
+    throw new Error(`${name}: HTTP ${response.status} ${(await response.text()).slice(0, 200)}`);
+  }
+  return response.json();
+}
+
+function buildDistrictLookup(branches) {
+  const votes = new Map();
+  for (const branch of branches) {
+    if (!branch.district || !branch.location) continue;
+    const key = norm(branch.location);
+    if (!votes.has(key)) votes.set(key, new Map());
+    const tally = votes.get(key);
+    tally.set(branch.district, (tally.get(branch.district) || 0) + 1);
+  }
+  const lookup = new Map();
+  for (const [key, tally] of votes) {
+    lookup.set(key, [...tally.entries()].sort((a, b) => b[1] - a[1])[0][0]);
+  }
+  return lookup;
+}
+
+async function main() {
+  const [companies, branches, socials] = await Promise.all([
+    table("cafe_companies", "select=*"),
+    table("cafe_branches", "select=*"),
+    table("cafe_socials", "select=*")
+  ]);
+
+  const byCompany = new Map();
+  for (const branch of branches) {
+    if (!byCompany.has(branch.company_id)) byCompany.set(branch.company_id, []);
+    byCompany.get(branch.company_id).push(branch);
+  }
+
+  const instagramByCompany = new Map();
+  for (const social of socials) {
+    if (social.platform === "instagram" && social.username) {
+      instagramByCompany.set(social.company_id, clean(social.username, 40));
+    }
+  }
+
+  const districtLookup = buildDistrictLookup(branches);
+
+  const records = [];
+  const usedIds = new Set();
+  const placed = new Map();
+  const stats = {
+    companies: companies.length,
+    branches: branches.length,
+    closedBranches: 0,
+    closureNotes: 0,
+    unknownBrand: 0,
+    noLocation: 0,
+    districtInferred: 0,
+    districtUnknown: 0,
+    duplicates: 0,
+    brandDuplicates: 0
+  };
+
+  const ordered = [...companies].sort(
+    (a, b) => String(a.brand_name || "").localeCompare(String(b.brand_name || "")) ||
+      String(a.created_at).localeCompare(String(b.created_at))
+  );
+
+  for (const company of ordered) {
+    const name = clean(company.brand_name, 60);
+    /* The directory has one placeholder brand literally named "Unknown". */
+    if (!name || norm(name) === "unknown") {
+      stats.unknownBrand += 1;
+      continue;
+    }
+
+    const companyBranches = (byCompany.get(company.id) || []).filter((branch) => {
+      if (branch.is_closed) {
+        stats.closedBranches += 1;
+        return false;
+      }
+      if (branch.notes && CLOSURE_NOTE.test(branch.notes)) {
+        stats.closureNotes += 1;
+        return false;
+      }
+      return true;
+    });
+
+    const seenPlaces = new Set();
+
+    for (const branch of companyBranches) {
+      const location = clean(branch.location, 40);
+      if (!location) {
+        stats.noLocation += 1;
+        continue;
+      }
+      /* Two branches of one brand at the same location are one cafe. */
+      const place = norm(location);
+      if (seenPlaces.has(place)) {
+        stats.duplicates += 1;
+        continue;
+      }
+      seenPlaces.add(place);
+
+      let district = DISTRICTS.includes(branch.district) ? branch.district : "";
+      if (!district) {
+        const inferred = districtLookup.get(norm(location));
+        if (inferred) {
+          district = inferred;
+          stats.districtInferred += 1;
+        } else {
+          stats.districtUnknown += 1;
+        }
+      }
+
+      const storeType = CATEGORY_BY_STORE_TYPE[branch.store_type] || "Cafe";
+      const tags = [];
+      if (company.is_franchise) tags.push("Franchise");
+      for (const [flag, label] of TAGS_BY_FLAG) {
+        if (branch[flag] === true && !tags.includes(label)) tags.push(label);
+      }
+
+      const rawNote = clean(branch.notes, 160);
+      const noteIsAddress = rawNote && ADDRESS_NOTE.test(rawNote) && rawNote.length > 12;
+      const noteIsUseful = rawNote && !noteIsAddress && rawNote.length > 8 && !INTERNAL_NOTE.test(rawNote);
+
+      const address = noteIsAddress
+        ? rawNote
+        : [location, district || "Brunei"].join(", ");
+
+      const descriptionParts = [storeType === "Cafe" ? "Cafe" : storeType + " cafe"];
+      descriptionParts.push("in " + [location, district].filter(Boolean).join(", ") + ".");
+      const headline = tags.filter((tag) => tag !== "Newly added" && tag !== "Franchise");
+      const description =
+        descriptionParts.join(" ").replace("Cafe in", "Cafe in") +
+        (headline.length ? " " + headline.join(", ") + "." : "");
+
+      let id = slug(name) + "-" + slug(location);
+      let suffix = 2;
+      while (usedIds.has(id)) id = slug(name) + "-" + slug(location) + "-" + suffix++;
+      usedIds.add(id);
+
+      const colors = paletteFor(name + location);
+      const record = {
+        id,
+        name,
+        area: location,
+        district: district || "Brunei-Muara",
+        category: storeType,
+        tags: tags.slice(0, 4),
+        description: clean(description, 240),
+        address: clean(address, 100),
+        hours: "",
+        price: "$$",
+        menu: [],
+        color: colors[0],
+        color2: colors[1],
+        instagram: instagramByCompany.get(company.id) || "",
+        directoryNote: noteIsUseful ? rawNote : ""
+      };
+
+      /* Only carry the key when a logo actually exists, so the generated
+         file stays a clean list of what the app can actually show. */
+      const logo = logoFor(name);
+      if (logo) record.logo = logo;
+
+      /* The directory occasionally holds one shop twice — same brand, same
+         neighbourhood, same Instagram, entered as two companies. Keep the
+         first row and let the later one donate anything more specific. */
+      const placeKey = norm(name) + "@" + place;
+      const previous = placed.get(placeKey);
+      if (previous) {
+        stats.brandDuplicates += 1;
+        if (record.address.length > previous.address.length) previous.address = record.address;
+        if (!previous.directoryNote && record.directoryNote) previous.directoryNote = record.directoryNote;
+        if (!previous.instagram && record.instagram) previous.instagram = record.instagram;
+        for (const tag of record.tags) {
+          if (!previous.tags.includes(tag)) previous.tags.push(tag);
+        }
+        usedIds.delete(id);
+        continue;
+      }
+      placed.set(placeKey, record);
+      records.push(record);
+    }
+  }
+
+  records.sort(
+    (a, b) =>
+      DISTRICTS.indexOf(a.district) - DISTRICTS.indexOf(b.district) ||
+      a.name.localeCompare(b.name) ||
+      a.area.localeCompare(b.area)
+  );
+
+  const body = records.map((record) => "    " + JSON.stringify(record) + ",").join("\n");
+
+  const output = `/* ============================================================
+   Bah_ngupi — generated cafe directory
+   ------------------------------------------------------------
+   DO NOT EDIT BY HAND. Regenerate with:  node tools/import-cafes.mjs
+   Source: https://bruneicoffeeplaces.com (community-maintained
+   Brunei coffee directory). ${records.length} entries, generated
+   ${new Date().toISOString().slice(0, 10)}.
+
+   These are directory rows, not hand-written copy: hours, price and
+   menu are intentionally blank rather than invented. This file is the
+   app's only source of cafes — there is no hand-written cafe list.
+   ============================================================ */
+(function () {
+  "use strict";
+
+  const BN = (window.BN = window.BN || {});
+
+  BN.CAFE_DIRECTORY = [
+${body}
+  ];
+})();
+`;
+
+  writeFileSync(OUT_FILE, output, "utf8");
+
+  const districts = records.reduce((acc, record) => {
+    acc[record.district] = (acc[record.district] || 0) + 1;
+    return acc;
+  }, {});
+
+  console.log("Wrote " + OUT_FILE);
+  console.log("  entries            :", records.length);
+  console.log("  by district        :", JSON.stringify(districts));
+  console.log("  dropped is_closed  :", stats.closedBranches);
+  console.log("  dropped by note    :", stats.closureNotes);
+  console.log("  unknown brand      :", stats.unknownBrand);
+  console.log("  no location        :", stats.noLocation);
+  console.log("  duplicate place    :", stats.duplicates);
+  console.log("  same shop, twice   :", stats.brandDuplicates);
+  console.log("  district inferred  :", stats.districtInferred);
+  console.log("  district unknown   :", stats.districtUnknown);
+  console.log("  with instagram     :", records.filter((record) => record.instagram).length);
+  console.log("  bytes              :", Buffer.byteLength(output, "utf8"));
+}
+
+main().catch((error) => {
+  console.error("import failed:", error.message);
+  process.exit(1);
+});

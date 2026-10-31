@@ -24,7 +24,7 @@
     passportDate: null,
     cafeSearch: null,
     clearSearch: null,
-    areaChips: null,
+    districtChips: null,
     cafeList: null,
     cafeCount: null,
     favouritesToggle: null,
@@ -33,7 +33,7 @@
   };
 
   let store = null;
-  let selectedArea = "All";
+  let selectedDistrict = "All";
   let queryText = "";
   let favouritesOnly = false;
   let pendingPhoto = null;
@@ -451,17 +451,16 @@
 
   /* ── Explore rendering ──────────────────────────────────── */
 
-  function renderAreas(cafes) {
-    const areas = Array.from(new Set(cafes.map((cafe) => cafe.area))).sort((a, b) => a.localeCompare(b));
-    if (selectedArea !== "All" && !areas.includes(selectedArea)) {
-      selectedArea = "All";
-    }
+  function renderDistricts(cafes) {
     const counts = new Map();
-    cafes.forEach((cafe) => counts.set(cafe.area, (counts.get(cafe.area) || 0) + 1));
+    cafes.forEach((cafe) => counts.set(cafe.district, (counts.get(cafe.district) || 0) + 1));
+    if (selectedDistrict !== "All" && !DISTRICTS.includes(selectedDistrict)) {
+      selectedDistrict = "All";
+    }
     const chip = (label, value, count) =>
       '<button class="chip ' +
-      (selectedArea === value ? "is-active" : "") +
-      '" data-area="' +
+      (selectedDistrict === value ? "is-active" : "") +
+      '" data-district="' +
       U.escapeHtml(value) +
       '">' +
       "<span>" +
@@ -469,16 +468,16 @@
       '</span><span class="chip-count">' +
       count +
       "</span></button>";
-    const chips = [chip("All areas", "All", cafes.length)]
-      .concat(areas.map((area) => chip(area, area, counts.get(area) || 0)))
+    const chips = [chip("All districts", "All", cafes.length)]
+      .concat(DISTRICTS.map((district) => chip(district, district, counts.get(district) || 0)))
       .join("");
-    emptyState.areaChips.innerHTML = chips;
+    emptyState.districtChips.innerHTML = chips;
   }
 
   function matchingCafes() {
     const query = queryText.trim().toLowerCase();
     return store.allCafes().filter((cafe) => {
-      if (selectedArea !== "All" && cafe.area !== selectedArea) return false;
+      if (selectedDistrict !== "All" && cafe.district !== selectedDistrict) return false;
       if (favouritesOnly && !store.isFavorite(cafe.id)) return false;
       if (!query) return true;
       const haystack = [
@@ -502,6 +501,24 @@
     const colors = colorOf(cafe);
     const tags = (cafe.tags || []).slice(0, 2);
     const visited = visits.length > 0;
+    const dot = visited ? '<span class="cafe-mono-dot" aria-hidden="true"></span>' : "";
+    /* A real brand logo sits on a cream plate; without one the generated
+       monogram keeps the card readable and consistent. */
+    const mark = cafe.logo
+      ? '<span class="cafe-mono is-logo">' +
+        '<img class="cafe-logo" src="' +
+        U.escapeHtml(cafe.logo) +
+        '" alt="" width="128" height="128" loading="lazy" decoding="async">' +
+        dot +
+        "</span>"
+      : '<span class="cafe-mono" style="background:linear-gradient(135deg,' +
+        colors.color +
+        "," +
+        colors.color2 +
+        ')">' +
+        U.escapeHtml(U.initials(cafe.name)) +
+        dot +
+        "</span>";
     return (
       '<article class="cafe-card' +
       (visited ? " is-visited" : "") +
@@ -509,14 +526,7 @@
       '<button class="cafe-open" data-action="open-cafe" data-cafe-id="' +
       U.escapeHtml(cafe.id) +
       '">' +
-      '<span class="cafe-mono" style="background:linear-gradient(135deg,' +
-      colors.color +
-      "," +
-      colors.color2 +
-      ')">' +
-      U.escapeHtml(U.initials(cafe.name)) +
-      (visited ? '<span class="cafe-mono-dot" aria-hidden="true"></span>' : "") +
-      "</span>" +
+      mark +
       '<span class="cafe-body">' +
       '<span class="cafe-title-row"><strong>' +
       U.escapeHtml(cafe.name) +
@@ -553,10 +563,10 @@
 
   function renderExplore() {
     const all = store.allCafes();
-    renderAreas(all);
+    renderDistricts(all);
 
     const results = matchingCafes();
-    const filtered = selectedArea !== "All" || queryText.trim() || favouritesOnly;
+    const filtered = selectedDistrict !== "All" || queryText.trim() || favouritesOnly;
     emptyState.cafeCount.textContent = filtered
       ? results.length + " of " + all.length + " cafes"
       : all.length + " cafes";
@@ -573,7 +583,7 @@
         '<div class="empty-state">' +
         '<svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg>' +
         "<strong>No cafes found</strong>" +
-        "<p>Try a different area, or add this hidden gem yourself.</p>" +
+        "<p>Try a different district, or add this hidden gem yourself.</p>" +
         '<button class="btn btn-ghost btn-sm" data-action="clear-filters">Clear filters</button>' +
         "</div>";
       return;
@@ -665,9 +675,13 @@
       '<div class="detail-cover" style="' +
       coverStyle(cafe) +
       '">' +
-      '<span class="detail-cover-mono">' +
-      U.escapeHtml(U.initials(cafe.name)) +
-      "</span>" +
+      (cafe.logo
+        ? '<span class="detail-cover-mono is-logo"><img src="' +
+          U.escapeHtml(cafe.logo) +
+          '" alt=""></span>'
+        : '<span class="detail-cover-mono">' +
+          U.escapeHtml(U.initials(cafe.name)) +
+          "</span>") +
       '<div class="detail-cover-badges">' +
       '<span class="tag">' +
       U.escapeHtml(cafe.category) +
@@ -1302,7 +1316,7 @@
           U.toast(nowFav ? "Saved to favourites." : "Removed from favourites.", "success");
         } else if (action === "clear-filters") {
           queryText = "";
-          selectedArea = "All";
+          selectedDistrict = "All";
           favouritesOnly = false;
           if (emptyState.cafeSearch) emptyState.cafeSearch.value = "";
           renderExplore();
@@ -1328,11 +1342,11 @@
       });
     }
 
-    if (emptyState.areaChips) {
-      emptyState.areaChips.addEventListener("click", (event) => {
-        const chip = event.target.closest("[data-area]");
+    if (emptyState.districtChips) {
+      emptyState.districtChips.addEventListener("click", (event) => {
+        const chip = event.target.closest("[data-district]");
         if (!chip) return;
-        selectedArea = chip.getAttribute("data-area") || "All";
+        selectedDistrict = chip.getAttribute("data-district") || "All";
         renderExplore();
       });
     }
@@ -1378,7 +1392,7 @@
     emptyState.passportDate = document.getElementById("passportDate");
     emptyState.cafeSearch = document.getElementById("cafeSearch");
     emptyState.clearSearch = document.getElementById("clearSearch");
-    emptyState.areaChips = document.getElementById("areaChips");
+    emptyState.districtChips = document.getElementById("districtChips");
     emptyState.cafeList = document.getElementById("cafeList");
     emptyState.cafeCount = document.getElementById("cafeCount");
     emptyState.favouritesToggle = document.getElementById("favouritesToggle");

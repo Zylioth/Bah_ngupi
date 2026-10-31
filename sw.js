@@ -5,7 +5,7 @@
    ============================================================ */
 "use strict";
 
-const VERSION = "2.0.2";
+const VERSION = "2.1.4";
 const CACHE = "bah-ngupi-v" + VERSION;
 
 const PRECACHE = [
@@ -14,11 +14,14 @@ const PRECACHE = [
   "./manifest.json",
   "./css/style.css",
   "./js/utils.js",
+  "./js/cafes-directory.js",
   "./js/cafes.js",
   "./js/passport.js",
   "./js/dialer.js",
   "./js/app.js",
   "./assets/fonts/fraunces-latin.woff2",
+  "./assets/logos/roasted-sip.png",
+  "./assets/logos/zus-coffee.png",
   "./assets/fonts/manrope-latin.woff2",
   "./assets/fonts/jetbrains-mono-latin.woff2",
   "./assets/icons/icon.svg",
