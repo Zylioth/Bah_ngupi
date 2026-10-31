@@ -1,207 +1,154 @@
-# ☕ Bah_ngupi
+# Bah_ngupi
 
-A gamified, mobile-first **cafe hopping passport & tracker** for Brunei Darussalam and Borneo — with a home-espresso dialer built in.
+A cafe-hopping passport for Brunei. Check in at a cafe, add a photo of your cup, collect a digital
+stamp — and time your espresso shots with the built-in dialer.
 
-Check in at local cafes, add a photo of your cup, collect a custom digital stamp, and watch your passport (and badge shelf) fill up. The espresso dialer times your shots and keeps a recipe diary for dialing in beans.
-
-> **v2.0** — editorial coffee-passport redesign, self-hosted type, no build step, no accounts, no tracking. Everything lives on your device.
-
----
-
-## Features
-
-### Passport
-- Physical-passport cover with live progress ring and a deterministic passport number
-- Paper stamp page: digital stamps generated per check-in with cafe monogram, area, month and year
-- 10 achievements (First Sip, Cafe Crawler, District Hopper, Sweet Spot, and more)
-- Recent-sip timeline with photo thumbnails
-- Duplicate visits are allowed — every visit earns its own dated stamp
-
-### Cafe directory
-- 342 cafes across Brunei-Muara, Tutong, Belait and Temburong, generated branch-for-branch from the community directory (296 brands)
-- Search by cafe, area, vibe, menu or district, with a sticky search/filter bar
-- District chips (Brunei-Muara, Tutong, Belait, Temburong) with cafe counts + favourites filter
-- Dense scan-friendly rows with monogram, category, tags and stamp tally
-- Add, edit and delete your own cafes
-- One-tap Google Maps search for every cafe
-
-### Check-in flow
-- Photo proof from camera or gallery
-- Client-side compression to max 800px at 0.7 JPEG quality before storage
-- Drink quick-picks from the cafe's signature menu
-- 5-star rating and tasting notes
-- Animated stamp reveal, with any newly earned badges
-- Quota guardrail: if storage is full, the visit is retried without the photo instead of failing silently
-
-### Espresso dialer
-- Shot timer with a dial progress ring, sweet-spot (25–32s) indicator and haptics
-- Bean search across Brunei, Malaysian and Borneo roasters
-- Dose / yield / ratio calculator
-- Recipe log with grind setting, tasting notes, and delete
-- Migrates recipes from the original single-file dialer (`espresso_history`)
-
-### PWA & privacy
-- Installable on iOS and Android from the browser
-- Service worker caches the shell so the passport catalog and timer work offline
-- Photos are compressed locally and **never uploaded**
-- Export/import a JSON backup; reset wipes the device data
+Everything runs in the browser. No account, no server, no build step, and the app keeps working
+offline once it has loaded.
 
 ---
 
-## Design system
+## What's inside
 
-The v2 interface treats the app like a **physical coffee passport** rather than a dashboard:
-
-- **Surfaces** — warm espresso shell (`#0a0705`) with ink-and-oxblood accents, plus paper (`#f1e4cf`) panels for the stamp page and profile ID card.
-- **Type** — Fraunces for display headlines, Manrope for UI copy, JetBrains Mono for passport numbers, timers and stats. All three are self-hosted variable fonts.
-- **Layout** — mobile-first shell capped at 480px, floating rounded bottom dock, sticky directory search/filter bar, compact scan-friendly cafe rows.
-- **Accessibility** — AA contrast, visible focus rings, `inert` closed sheets/modals, skip link, reduced-motion support and semantic landmarks.
+- **Passport** — your stamps, visit diary, badges and progress.
+- **Explore** — 342 cafes (296 brands) across all four districts, with search, district filters and favourites.
+- **Dialer** — espresso shot timer with a recipe log.
+- **Profile** — your name and home district, plus backup export and import.
 
 ---
 
-## Quick start
-
-No bundler, no dependencies.
+## Run it locally
 
 ```bash
-# from the project root
 python -m http.server 8080
-# or
-npx serve .
 ```
 
-Open <http://localhost:8080>. A local server is needed for the service worker; the app itself also runs when `index.html` is opened directly (offline caching stays off on `file://`).
+Then open <http://localhost:8080>.
+
+Use a local server instead of double-clicking `index.html` — the service worker that makes the app
+work offline only runs over http.
+
+There is no `npm install` and no build step. Node is needed only to regenerate the cafe list or the
+app icons.
 
 ---
 
-## Project structure
+## Where the cafes come from
 
-```text
-bah-ngupi/
-├── index.html               App shell, tab containers, SVG icon sprite
-├── manifest.json            PWA manifest (name, icons, shortcuts)
-├── sw.js                    Offline app-shell cache
-├── _headers                 Netlify security headers + CSP
-├── vercel.json              Vercel security headers + caching
-├── css/
-│   └── style.css            Editorial coffee-passport design system, mobile-first layout
-├── js/
-│   ├── utils.js             Escaping, storage, image compression, sheet/toast UI
-│   ├── cafes-directory.js   Generated cafe directory (do not edit by hand)
-│   ├── cafes.js             Coffee bean database; cafe list lives in the directory
-│   ├── passport.js          Directory, check-ins, stamps, achievements
-│   ├── dialer.js            Shot timer, bean picker, recipe log
-│   └── app.js               Store, router, profile, import/export, PWA
-├── assets/
-│   ├── fonts/               Self-hosted Fraunces, Manrope, JetBrains Mono (OFL)
-│   ├── icons/               Generated PNG icons + SVG favicon
-│   └── logos/               Optional brand logos, 128px PNG, one per brand slug
-└── tools/
-    ├── generate-icons.js    Dependency-free PNG icon generator
-    └── import-cafes.mjs     Regenerates js/cafes-directory.js from the public directory
+Every cafe comes from **[bruneicoffeeplaces.com](https://bruneicoffeeplaces.com)**, a
+community-maintained Brunei coffee directory. It is downloaded once and saved into the repo:
+
+```bash
+node tools/import-cafes.mjs
 ```
 
-Scripts are classic `<script defer>` files sharing the `window.BN` namespace. That keeps the app working from the filesystem and avoids module/CORS surprises.
+That rewrites `js/cafes-directory.js` and needs nothing installed (Node 18+). The app never fetches
+cafes at runtime.
+
+- **Never edit `js/cafes-directory.js` by hand** — the next run overwrites it.
+- The importer skips closed cafes, drops pop-ups that have no location, and merges the one shop the
+  source happens to list twice.
+- **Missing cafe?** Add it in the app: Explore → **+**. It is saved on your device and marked
+  "Added by you".
+- Hours, price and menu stay blank for directory rows rather than being guessed. That is deliberate.
 
 ---
 
-## Data model
+## Logos
 
-All state is stored in `localStorage` under versioned keys:
+Optional. Drop a 128px transparent PNG in `assets/logos/` named after the brand:
 
-| Key | Contents |
+```
+assets/logos/zus-coffee.png    → every ZUS Coffee branch
+assets/logos/roasted-sip.png   → every Roasted Sip branch
+```
+
+Rerun the importer and every branch of that brand picks it up. Brands without a file show a
+generated monogram instead, which is what most of the list does. Only two logos ship today, because
+that is all that could be sourced cleanly.
+
+Brand marks are trademarks of their owners and are used only to identify the business.
+
+---
+
+## Your data
+
+Everything lives in this browser's `localStorage`. Nothing is uploaded anywhere.
+
+| Key | What it holds |
 | --- | --- |
-| `bn_custom_cafes_v1` | Cafes added by the user |
-| `bn_visits_v1` | Check-ins: cafe id, ISO date, drink, notes, rating, compressed photo |
+| `bn_visits_v1` | Check-ins: cafe, date, drink, notes, rating, photo |
 | `bn_favorites_v1` | Favourite cafe ids |
-| `bn_profile_v1` | Passport name, home district, join date |
-| `espresso_history` | Espresso recipes (kept compatible with the original dialer) |
+| `bn_custom_cafes_v1` | Cafes you added yourself |
+| `bn_profile_v1` | Name, home district, join date |
+| `espresso_history` | Espresso recipes |
 
-Cafes come from exactly one place: `js/cafes-directory.js`, generated by `node tools/import-cafes.mjs` from bruneicoffeeplaces.com. There is no hand-written cafe list to drift out of date or invent places that do not exist — `js/cafes.js` only holds the coffee bean database. Counts are per **location**, not per brand: 342 listings cover 296 brands, because chains list every branch separately (ZUS has 8, Roasted Sip 6, Coffee Bean 8). To add a cafe the directory misses, use the in-app "Add a cafe" flow — it stays local and is marked as yours.
-
-### Backup format
-
-```json
-{
-  "app": "bah-ngupi",
-  "version": 1,
-  "exportedAt": "2026-10-26T08:00:00.000Z",
-  "profile": { "name": "Aiman", "district": "Brunei-Muara", "joined": "..." },
-  "customCafes": [],
-  "favorites": [],
-  "visits": [],
-  "shots": []
-}
-```
-
-Imports are validated and normalised before replacing state.
+Photos are compressed to 800px JPEG before saving. Because it is all local, clearing browser data
+deletes it — use **Profile → Export** for a backup, and Import to restore it.
 
 ---
 
-## Security & data integrity notes
+## Files
 
-- **XSS**: all user-controlled values are escaped with `BN.Utils.escapeHtml` before entering template strings. Dynamic text that goes through `textContent` is passed raw. No inline `onclick` handlers, so the CSP does not need `unsafe-inline` for scripts.
-- **Image pipeline**: `compressImage()` draws the selected file to a canvas capped at 800px (long edge) and encodes JPEG at 0.7 quality. Typical output is 50–100 KB instead of 10–15 MB.
-- **Storage**: every `localStorage` write goes through `writeJSON()` and is wrapped in `try/catch`. Quota failures are surfaced; check-ins retry without the photo.
-- **CSP**: `default-src 'self'`, scripts only from self, images limited to self/data/blob. Google Maps opens as a normal top-level navigation, not an embedded script.
-- **Photo data URLs** are validated on import (`data:image/jpeg|png|webp;base64`) and size-capped.
-- **No runtime third-party requests** — fonts are self-hosted under `assets/fonts` (Fraunces, Manrope, JetBrains Mono, SIL OFL) and precached by the service worker. No analytics, no CDN, so the app stays fully self-contained and offline-friendly.
+```
+index.html              app shell: four views, icon sprite, sheets, modals
+manifest.json           PWA metadata
+sw.js                   offline cache — bump VERSION when you ship changes
+css/style.css           all styling
+js/utils.js             helpers: escaping, storage, image compression, toasts
+js/cafes-directory.js   GENERATED cafe list — do not edit
+js/cafes.js             coffee bean database
+js/passport.js          explore list, check-ins, stamps, badges
+js/dialer.js            espresso timer and recipe log
+js/app.js               store, router, profile, import/export
+assets/                 fonts, icons, logos
+tools/import-cafes.mjs  regenerates the cafe list
+tools/generate-icons.js regenerates the app icons
+_headers, vercel.json   caching and security headers for Netlify / Vercel
+```
 
-> `style-src` allows `'unsafe-inline'` because cover gradients and timer progress use inline style properties. Fonts load from `'self'` only. Scripts remain locked down.
+Scripts load in a fixed order — `utils → cafes-directory → cafes → passport → dialer → app` — and
+share one `window.BN` namespace. Keep that order.
+
+---
+
+## Making changes
+
+Four rules that keep the app working:
+
+1. **Escape everything you render.** Text goes through `U.escapeHtml()`. The page builds HTML from
+   strings, and the Content Security Policy forbids inline `<script>` and `onclick`.
+2. **A new saved field needs three edits:** the normaliser in `js/app.js`, plus `exportData` and
+   `importData`. Miss them and backups silently drop the field.
+3. **Bump `VERSION` in `sw.js`** whenever a change to `css/` or `js/` should reach existing users.
+   Installed copies cache hard and will not refresh otherwise.
+4. **Append new CSS to the end of `css/style.css`.** The file is layered and later rules win.
+
+There are no automated tests. Before pushing, click through: passport stamps → explore search and
+district filter → open a cafe → check in with a photo → stamp modal → profile stats → export and
+import → dialer timer → save a shot.
 
 ---
 
 ## Deploy
 
-### Netlify
-Drag the folder into Netlify, or connect the repo. `_headers` applies HTTPS/HSTS (automatic), CSP and cache rules. There is no build command.
+Static hosting, nothing to configure.
 
-### Vercel
-Import the repo and deploy as a static project. `vercel.json` mirrors the security and cache headers.
+- **Vercel** — import the repo, framework preset "Other", no build command, output directory `/`.
+  `vercel.json` sets headers and caching.
+- **Netlify** — publish directory `.`, no build command. `_headers` does the same job.
 
-### Any static host
-Upload the repository contents. Serve over HTTPS so the service worker and install prompt work. Do not rename `sw.js` without updating the registration in `js/app.js`.
-
----
-
-## Regenerate icons
-
-```bash
-node tools/generate-icons.js
-```
-
-The script renders the coffee-bean passport mark with anti-aliasing and writes:
-
-- `icon-192.png`
-- `icon-512.png`
-- `icon-maskable-512.png`
-- `apple-touch-icon-180.png`
-- `favicon-32.png`
+Long cache for `assets/`, short for `js/` and `css/`, no-store for `sw.js` — already configured in
+both files.
 
 ---
 
-## Directory credit
+## Credits
 
-Every cafe in the app comes from **bruneicoffeeplaces.com**, a community-maintained Brunei coffee directory, pulled by `tools/import-cafes.mjs`. Attribution belongs there: the list is their curation work, not ours.
+- Cafe directory: [bruneicoffeeplaces.com](https://bruneicoffeeplaces.com) — the list is their
+  curation work, not ours.
+- Fonts: Fraunces, Manrope and JetBrains Mono, self-hosted under the SIL Open Font License
+  (`assets/fonts/OFL.txt`).
+- Brand logos belong to their respective cafes.
 
-Nothing is invented: entries the importer produces keep hours, price and menu blank rather than guessed, branches marked closed are dropped, and a shop the source holds twice is merged. Places the directory misses can be added in-app; those stay on the device and are marked as yours.
-
-No affiliation with any cafe or brand is implied.
-
-### Brand logos
-
-Logos are opt-in and never fetched at runtime. Drop a 128px transparent PNG at `assets/logos/<brand-slug>.png` (the brand name lowercased, spaces to hyphens — `zus-coffee.png`, `roasted-sip.png`) and rerun `node tools/import-cafes.mjs`; every branch of that brand picks it up. The importer attaches the logo to every branch of that brand.
-
-Only two brands ship with a logo, because that is all that could be sourced cleanly: ZUS Coffee and Roasted Sip both publish a usable mark. Everything else keeps the generated monogram, and because both treatments sit on the same cream plate the mix reads as intentional rather than broken.
-
-Logos render on a `--paper` plate deliberately: most brand marks are drawn for white backgrounds and disappear against the dark shell. Trademarks belong to their owners; logos are used here only to identify the business, not to imply endorsement.
-
----
-
-## Browser support
-
-Modern evergreen browsers (Chrome, Edge, Safari 16+, Firefox). PWA installation is supported on Chromium browsers and iOS Safari via Share → Add to Home Screen. `navigator.vibrate` is a progressive enhancement.
-
----
-
-Made for Brunei coffee lovers. **Selamat ngupi.**
+Not affiliated with any cafe or brand.
