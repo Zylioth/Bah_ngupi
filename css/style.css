@@ -1491,7 +1491,6 @@ svg {
 }
 
 .dial-bar {
-  stroke: url("#timerGradient");
   stroke: var(--accent);
   stroke-width: 9;
   stroke-linecap: round;
