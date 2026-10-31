@@ -20,7 +20,7 @@ Check in at local cafes, add a photo of your cup, collect a custom digital stamp
 ### Cafe directory
 - 348 starter cafes across Brunei-Muara, Tutong, Belait and Temburong: 37 hand-written entries plus a generated directory of 311 branches
 - Search by cafe, area, vibe, menu or district, with a sticky search/filter bar
-- Area chips with cafe counts + favourites filter
+- District chips (Brunei-Muara, Tutong, Belait, Temburong) with cafe counts + favourites filter
 - Dense scan-friendly rows with monogram, category, tags and stamp tally
 - Add, edit and delete your own cafes
 - One-tap Google Maps search for every cafe
